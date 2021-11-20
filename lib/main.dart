@@ -1,5 +1,7 @@
+import 'package:flutter/cupertino.dart';
+import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:flutter/material.dart';
-import 'package:expressions/expressions.dart';
+import 'package:function_tree/function_tree.dart';
 import 'dart:math';
 
 void main() {
@@ -77,14 +79,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     // Parse expression:
-    Expression expression = Expression.parse("(e^(3 * 2)) / (e^5)");
-
-    // Create context containing all the variables and functions used in the expression
-
-    // Evaluate expression
-    var evaluator = const MyEvaluator();
-
-    var r = evaluator.eval(expression, expressionContext);
+    String expression = "e^(3 * 2) / e^5";
+    final e = expression.interpret();
+    final tex = expression.toSingleVariableFunction().tex;
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
@@ -101,18 +98,25 @@ class _MyHomePageState extends State<MyHomePage> {
               width: MediaQuery.of(context).size.width,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.end,
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Text(
-                    'cos(x)*cos(x)+sin(x)*sin(x)==2',
-                    style: TextStyle(
+                  Math.tex(
+                    tex,
+                    textStyle: const TextStyle(
                       color: Colors.white,
-                      fontSize: 50,
+                      fontSize: 42,
+                    ),
+                    onErrorFallback: (FlutterMathException e) => const Text(
+                      "Math Error!",
+                      style: TextStyle(
+                        color: Colors.red,
+                      ),
                     ),
                   ),
                   Text(
-                    '$r',
+                    '=  $e',
                     style: const TextStyle(
-                      color: Colors.white,
+                      color: Colors.white38,
                       fontSize: 42,
                     ),
                   ),
@@ -124,16 +128,16 @@ class _MyHomePageState extends State<MyHomePage> {
           Row(
             children: [
               normalButton("(", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
+              normalButton(")", context),
+              normalButton("mc", context),
+              normalButton("m+", context),
+              normalButton("m-", context),
+              normalButton("mr", context),
+              normalButton("C", context),
+              texButton(r"^+/_-", context),
+              texButton(r"\%", context),
               normalButton(
-                "=",
+                "÷",
                 context,
                 color: const Color(0xFFF0A500),
               ),
@@ -141,17 +145,17 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Row(
             children: [
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context, color: const Color(0xFF625B5B)),
-              normalButton("0", context, color: const Color(0xFF625B5B)),
-              normalButton("0", context, color: const Color(0xFF625B5B)),
+              iconButton(CupertinoIcons.settings, context),
+              texButton(r"x^2", context),
+              texButton(r"x^3", context),
+              texButton(r"x^y", context),
+              texButton(r"e^x", context),
+              texButton(r"10^x", context),
+              normalButton("7", context, color: const Color(0xFF625B5B)),
+              normalButton("8", context, color: const Color(0xFF625B5B)),
+              normalButton("9", context, color: const Color(0xFF625B5B)),
               normalButton(
-                "=",
+                "×",
                 context,
                 color: const Color(0xFFF0A500),
               ),
@@ -159,17 +163,17 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Row(
             children: [
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context, color: const Color(0xFF625B5B)),
-              normalButton("0", context, color: const Color(0xFF625B5B)),
-              normalButton("0", context, color: const Color(0xFF625B5B)),
+              texButton(r"\frac{1}{x}", context),
+              texButton(r"\sqrt[2]{x}", context),
+              texButton(r"\sqrt[3]{x}", context),
+              texButton(r"\sqrt[y]{x}", context),
+              texButton(r"\ln", context),
+              texButton(r"\log_{10}", context),
+              normalButton("4", context, color: const Color(0xFF625B5B)),
+              normalButton("5", context, color: const Color(0xFF625B5B)),
+              normalButton("6", context, color: const Color(0xFF625B5B)),
               normalButton(
-                "=",
+                "–",
                 context,
                 color: const Color(0xFFF0A500),
               ),
@@ -177,17 +181,17 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Row(
             children: [
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context, color: const Color(0xFF625B5B)),
-              normalButton("0", context, color: const Color(0xFF625B5B)),
-              normalButton("0", context, color: const Color(0xFF625B5B)),
+              texButton(r"x!", context),
+              texButton(r"\sin", context),
+              texButton(r"\cos", context),
+              texButton(r"\tan", context),
+              texButton(r"e", context),
+              normalButton("EE", context),
+              normalButton("1", context, color: const Color(0xFF625B5B)),
+              normalButton("2", context, color: const Color(0xFF625B5B)),
+              normalButton("3", context, color: const Color(0xFF625B5B)),
               normalButton(
-                "=",
+                "+",
                 context,
                 color: const Color(0xFFF0A500),
               ),
@@ -195,15 +199,16 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Row(
             children: [
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
-              normalButton("0", context),
+              normalButton("Rad", context),
+              texButton(r"\sinh", context),
+              texButton(r"\cosh", context),
+              texButton(r"\tanh", context),
+              texButton(r"\pi", context),
+              iconButton(CupertinoIcons.question_square, context),
+              normalButton(".", context, color: const Color(0xFF625B5B)),
               normalButton("0", context, color: const Color(0xFF625B5B)),
-              normalButton("0", context, color: const Color(0xFF625B5B)),
-              normalButton("0", context, color: const Color(0xFFE84545)),
+              iconButton(CupertinoIcons.delete_left, context,
+                  color: const Color(0xFFE84545)),
               normalButton(
                 "=",
                 context,
@@ -243,20 +248,64 @@ Widget normalButton(String text, BuildContext context,
   );
 }
 
-class MyEvaluator extends ExpressionEvaluator {
-  const MyEvaluator();
+Widget iconButton(IconData xIcon, BuildContext context,
+    {Color color = const Color(0xFF433A3A)}) {
+  Icon icon = Icon(xIcon, size: 42);
+  return SizedBox(
+    width: MediaQuery.of(context).size.width / 10,
+    height: MediaQuery.of(context).size.height / 1.5 / 5,
+    child: Container(
+      color: color,
+      child: TextButton(
+        onPressed: () {},
+        child: icon,
+        style: ButtonStyle(
+          backgroundColor: MaterialStateColor.resolveWith((states) => color),
+          foregroundColor:
+              MaterialStateColor.resolveWith((states) => Colors.white),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            const RoundedRectangleBorder(
+              borderRadius: BorderRadius.zero,
+              side: BorderSide(color: Color(0xFF1F1F1F), width: 0.5),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
 
-  @override
-  evalBinaryExpression(
-      BinaryExpression expression, Map<String, dynamic> context) {
-    if (expression.operator == '^') {
-      var leftExpression = Expression.parse(expression.left.toString());
-
-      eval(leftExpression, expressionContext);
-      final left = eval(expression.left, context);
-      final right = () => eval(expression.right, context);
-      return pow(left, right());
-    }
-    return super.evalBinaryExpression(expression, context);
-  }
+Widget texButton(String tex, BuildContext context,
+    {Color color = const Color(0xFF433A3A)}) {
+  return SizedBox(
+    width: MediaQuery.of(context).size.width / 10,
+    height: MediaQuery.of(context).size.height / 1.5 / 5,
+    child: TextButton(
+      onPressed: () {},
+      style: ButtonStyle(
+        backgroundColor: MaterialStateColor.resolveWith((states) => color),
+        foregroundColor:
+            MaterialStateColor.resolveWith((states) => Colors.white),
+        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+          const RoundedRectangleBorder(
+            borderRadius: BorderRadius.zero,
+            side: BorderSide(color: Color(0xFF1F1F1F), width: 0.5),
+          ),
+        ),
+      ),
+      child: Math.tex(
+        tex,
+        textStyle: const TextStyle(
+          color: Colors.white,
+          fontSize: 36,
+        ),
+        onErrorFallback: (FlutterMathException e) => const Text(
+          "Math Error!",
+          style: TextStyle(
+            color: Colors.red,
+          ),
+        ),
+      ),
+    ),
+  );
 }
