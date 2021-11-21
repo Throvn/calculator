@@ -8,17 +8,6 @@ void main() {
   runApp(const MyApp());
 }
 
-var expressionContext = {
-  "x": pi / 5,
-  "cos": cos,
-  "sin": sin,
-  "pow": pow,
-  "e": e,
-  "sqrt": sqrt,
-  "π": pi,
-  "pi": pi,
-};
-
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -63,25 +52,201 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  // initialize default values
+  List<Map<String, dynamic>> history = [];
+  String expression = "sqrt{4+3}+4";
+  String memoryExpression = "";
+  int openBrackets = 0;
 
-  void _incrementCounter() {
+  void openBracket() {
     setState(() {
-      // This call to setState tells the Flutter framework that something has
-      // changed in this State, which causes it to rerun the build method below
-      // so that the display can reflect the updated values. If we changed
-      // _counter without calling setState(), then the build method would not be
-      // called again, and so nothing would appear to happen.
-      _counter++;
+      openBrackets += 1;
+      expression += "(";
     });
+  }
+
+  void closeBracket() {
+    if (openBrackets < 1) return;
+    if (expression[expression.length - 1] == "(") {
+      expression = expression.substring(0, expression.length - 1);
+      return;
+    } else {
+      openBrackets -= 1;
+      expression += ")";
+    }
+    setState(() {});
+  }
+
+  void addNumberToExpression(String number) {
+    String lastChar = expression[expression.length - 1];
+    if (lastChar == "}") {
+      expression =
+          expression.substring(0, expression.length - 1) + number + "}";
+    } else {
+      expression += number;
+    }
+  }
+
+  void addToExpression(String appendix) {
+    expression += appendix;
+  }
+
+  void deleteFromExpression() {
+    String lastChar = expression[expression.length - 1];
+    switch (lastChar) {
+      case "}":
+        expression = expression.substring(0, expression.length - 2) + "}";
+        break;
+      case "t":
+        if (getExpression.lastIndexOf("sqrt") == expression.length - 4) {
+          expression = getExpression.substring(0, expression.length - 4);
+        }
+        print("Deleted special");
+        // lets hope that there is only ever one }
+
+        break;
+      default:
+        print("Deleted last");
+        expression = expression.substring(0, expression.length - 1);
+    }
+    print(expression);
+  }
+
+  int getMatchingClosingBracketPosition(String expression) {
+    int bracket = 1;
+    int i = 0;
+    while (bracket > 0 && i < expression.length) {
+      switch (expression[i]) {
+        case "(":
+          bracket += 1;
+          break;
+        case ")":
+          bracket -= 1;
+          break;
+        default:
+      }
+      i++;
+    }
+    return i;
+  }
+
+  /// Parses the [expr] into really basic latex.
+  ///
+  /// Supported operations are: + - * / ^
+  String latexParse(String expr) {
+    String expr = expression;
+
+    // parse all '/' to latex fractions
+    while (RegExp(r'([0-9]+|\(?.*\))\/(([0-9]+)|\(?.*?\)|)').hasMatch(expr)) {
+      RegExpMatch? match =
+          RegExp(r'([0-9]+|\(?.*\))\/(([0-9]+)|\(?.*?\)|)').firstMatch(expr);
+      if (match != null) {
+        expr = expr.replaceFirstMapped(
+            RegExp(r'([0-9]+|\(?.*\))\/(([0-9]+)|\(?.*?\)|)'), (match) {
+          return r"\frac{" + match.group(1)! + "}{" + match.group(2)! + "}";
+        });
+      }
+    }
+    // parse all '*' to latex notation
+    expr = expr.replaceAll(RegExp(r'\*'), r'\cdot');
+
+    // parse all squareroots to latex squareroots
+    expr = expr.replaceAll("sqrt", r"\sqrt");
+
+    // make sure exponentials are rendered correctly
+    while (expr.contains("^(")) {
+      int opening = expr.indexOf("^(");
+      int closing = getMatchingClosingBracketPosition(expr.substring(opening));
+      String temp = expr.substring(0, opening);
+      temp += "^{(";
+      temp += expr.substring(opening + 2, closing + 1);
+      temp += "}";
+      temp += expr.substring(closing + 1);
+      expr = temp;
+    }
+
+    return expr;
+  }
+
+  String get getExpression {
+    // remove all open brackets at the end
+    // String expr = expression.replaceAll(RegExp(r'\(+$'), "");
+
+    // close all open brackets
+    String expr =
+        openBrackets > 0 ? expression + (")" * openBrackets) : expression;
+    // remove all empty bracket pairs
+    expr = expr.replaceAll(RegExp(r'\(\)+'), "");
+
+    // to make latex parsing easier, we use curly brackets sometimes.
+    // but before calculation replace them with normal ones.
+    expr = expr.replaceAll("{", "(");
+    expr = expr.replaceAll("}", ")");
+
+    // remove all leading zeros
+    expr.replaceFirst(RegExp(r'^0+'), "");
+
+    return expr.isNotEmpty ? expr : "0";
+  }
+
+  void onButtonPress(String buttonText) {
+    switch (buttonText.toLowerCase()) {
+      case "(":
+        openBracket();
+        break;
+      case ")":
+        closeBracket();
+        break;
+      case "0":
+      case "1":
+      case "2":
+      case "3":
+      case "4":
+      case "5":
+      case "6":
+      case "7":
+      case "8":
+      case "9":
+      case ".":
+        addNumberToExpression(buttonText);
+        break;
+      case "–":
+        // – and - are not the same.
+        addToExpression("-");
+        break;
+      case "÷":
+        addToExpression("/");
+        break;
+      case "+":
+        addToExpression(buttonText);
+        break;
+      case "c":
+        expression = "0";
+        break;
+      case "delete":
+        deleteFromExpression();
+        break;
+      case "random number (0..1)":
+        break;
+      default:
+        print("Unhandled input!");
+        break;
+    }
+    setState(() {});
+  }
+
+  String getResultOfExpression(String expression) {
+    try {
+      return "= " +
+          getExpression.interpret().toString().toSingleVariableFunction().tex;
+    } catch (e) {
+      return "";
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     // Parse expression:
-    String expression = "e^(3 * 2) / e^5";
-    final e = expression.interpret();
-    final tex = expression.toSingleVariableFunction().tex;
 
     // This method is rerun every time setState is called, for instance as done
     // by the _incrementCounter method above.
@@ -96,29 +261,36 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Math.tex(
-                    tex,
-                    textStyle: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 42,
-                    ),
-                    onErrorFallback: (FlutterMathException e) => const Text(
-                      "Math Error!",
-                      style: TextStyle(
-                        color: Colors.red,
+              child: ListView(
+                children: <Widget>[
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Math.tex(
+                        latexParse(expression),
+                        textStyle: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 42,
+                        ),
+                        onErrorFallback: (FlutterMathException e) => const Text(
+                          "Invalid equation",
+                          style: TextStyle(
+                            color: Colors.red,
+                          ),
+                        ),
                       ),
-                    ),
-                  ),
-                  Text(
-                    '=  $e',
-                    style: const TextStyle(
-                      color: Colors.white38,
-                      fontSize: 42,
-                    ),
+                      const SizedBox(
+                        height: 5,
+                      ),
+                      Math.tex(
+                        getResultOfExpression(expression),
+                        textStyle: const TextStyle(
+                          color: Colors.white38,
+                          fontSize: 42,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
@@ -145,7 +317,11 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Row(
             children: [
-              iconButton(CupertinoIcons.settings, context),
+              iconButton(
+                CupertinoIcons.settings,
+                context,
+                name: "Settings",
+              ),
               texButton(r"x^2", context),
               texButton(r"x^3", context),
               texButton(r"x^y", context),
@@ -204,11 +380,12 @@ class _MyHomePageState extends State<MyHomePage> {
               texButton(r"\cosh", context),
               texButton(r"\tanh", context),
               texButton(r"\pi", context),
-              iconButton(CupertinoIcons.question_square, context),
+              iconButton(CupertinoIcons.question_square, context,
+                  name: "Random Number (0..1)"),
               normalButton(".", context, color: const Color(0xFF625B5B)),
               normalButton("0", context, color: const Color(0xFF625B5B)),
               iconButton(CupertinoIcons.delete_left, context,
-                  color: const Color(0xFFE84545)),
+                  color: const Color(0xFFE84545), name: "Delete"),
               normalButton(
                 "=",
                 context,
@@ -220,45 +397,16 @@ class _MyHomePageState extends State<MyHomePage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
-}
 
-Widget normalButton(String text, BuildContext context,
-    {Color color = const Color(0xFF433A3A)}) {
-  return SizedBox(
-    width: MediaQuery.of(context).size.width / 10,
-    height: MediaQuery.of(context).size.height / 1.5 / 5,
-    child: TextButton(
-      onPressed: () {},
-      style: ButtonStyle(
-        backgroundColor: MaterialStateColor.resolveWith((states) => color),
-        foregroundColor:
-            MaterialStateColor.resolveWith((states) => Colors.white),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          const RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero,
-            side: BorderSide(color: Color(0xFF1F1F1F), width: 0.5),
-          ),
-        ),
-      ),
-      child: Text(
-        text,
-        style: const TextStyle(fontSize: 42),
-      ),
-    ),
-  );
-}
-
-Widget iconButton(IconData xIcon, BuildContext context,
-    {Color color = const Color(0xFF433A3A)}) {
-  Icon icon = Icon(xIcon, size: 42);
-  return SizedBox(
-    width: MediaQuery.of(context).size.width / 10,
-    height: MediaQuery.of(context).size.height / 1.5 / 5,
-    child: Container(
-      color: color,
+  Widget normalButton(String text, BuildContext context,
+      {Color color = const Color(0xFF433A3A)}) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width / 10,
+      height: MediaQuery.of(context).size.width / 10,
       child: TextButton(
-        onPressed: () {},
-        child: icon,
+        onPressed: () {
+          onButtonPress(text);
+        },
         style: ButtonStyle(
           backgroundColor: MaterialStateColor.resolveWith((states) => color),
           foregroundColor:
@@ -270,42 +418,100 @@ Widget iconButton(IconData xIcon, BuildContext context,
             ),
           ),
         ),
+        child: Text(
+          text,
+          style: const TextStyle(fontSize: 42),
+        ),
       ),
-    ),
-  );
-}
+    );
+  }
 
-Widget texButton(String tex, BuildContext context,
-    {Color color = const Color(0xFF433A3A)}) {
-  return SizedBox(
-    width: MediaQuery.of(context).size.width / 10,
-    height: MediaQuery.of(context).size.height / 1.5 / 5,
-    child: TextButton(
-      onPressed: () {},
-      style: ButtonStyle(
-        backgroundColor: MaterialStateColor.resolveWith((states) => color),
-        foregroundColor:
-            MaterialStateColor.resolveWith((states) => Colors.white),
-        shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-          const RoundedRectangleBorder(
-            borderRadius: BorderRadius.zero,
-            side: BorderSide(color: Color(0xFF1F1F1F), width: 0.5),
+  Widget iconButton(IconData xIcon, BuildContext context,
+      {Color color = const Color(0xFF433A3A), @required String? name}) {
+    Icon icon = Icon(xIcon, size: 42);
+    return SizedBox(
+      width: MediaQuery.of(context).size.width / 10,
+      height: MediaQuery.of(context).size.width / 10,
+      child: Container(
+        color: color,
+        child: name != null
+            ? Tooltip(
+                message: name,
+                child: TextButton(
+                  onPressed: () {
+                    onButtonPress(name);
+                  },
+                  child: icon,
+                  style: ButtonStyle(
+                    backgroundColor:
+                        MaterialStateColor.resolveWith((states) => color),
+                    foregroundColor: MaterialStateColor.resolveWith(
+                        (states) => Colors.white),
+                    shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                      const RoundedRectangleBorder(
+                        borderRadius: BorderRadius.zero,
+                        side: BorderSide(color: Color(0xFF1F1F1F), width: 0.5),
+                      ),
+                    ),
+                  ),
+                ),
+              )
+            : TextButton(
+                onPressed: () {
+                  onButtonPress(xIcon.codePoint.toString());
+                },
+                child: icon,
+                style: ButtonStyle(
+                  backgroundColor:
+                      MaterialStateColor.resolveWith((states) => color),
+                  foregroundColor:
+                      MaterialStateColor.resolveWith((states) => Colors.white),
+                  shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+                    const RoundedRectangleBorder(
+                      borderRadius: BorderRadius.zero,
+                      side: BorderSide(color: Color(0xFF1F1F1F), width: 0.5),
+                    ),
+                  ),
+                ),
+              ),
+      ),
+    );
+  }
+
+  Widget texButton(String tex, BuildContext context,
+      {Color color = const Color(0xFF433A3A)}) {
+    return SizedBox(
+      width: MediaQuery.of(context).size.width / 10,
+      height: MediaQuery.of(context).size.width / 10,
+      child: TextButton(
+        onPressed: () {
+          onButtonPress(tex);
+        },
+        style: ButtonStyle(
+          backgroundColor: MaterialStateColor.resolveWith((states) => color),
+          foregroundColor:
+              MaterialStateColor.resolveWith((states) => Colors.white),
+          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
+            const RoundedRectangleBorder(
+              borderRadius: BorderRadius.zero,
+              side: BorderSide(color: Color(0xFF1F1F1F), width: 0.5),
+            ),
+          ),
+        ),
+        child: Math.tex(
+          tex,
+          textStyle: const TextStyle(
+            color: Colors.white,
+            fontSize: 36,
+          ),
+          onErrorFallback: (FlutterMathException e) => const Text(
+            "Math Error!",
+            style: TextStyle(
+              color: Colors.red,
+            ),
           ),
         ),
       ),
-      child: Math.tex(
-        tex,
-        textStyle: const TextStyle(
-          color: Colors.white,
-          fontSize: 36,
-        ),
-        onErrorFallback: (FlutterMathException e) => const Text(
-          "Math Error!",
-          style: TextStyle(
-            color: Colors.red,
-          ),
-        ),
-      ),
-    ),
-  );
+    );
+  }
 }
