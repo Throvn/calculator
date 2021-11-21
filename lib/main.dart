@@ -55,14 +55,21 @@ class _MyHomePageState extends State<MyHomePage> {
   // initialize default values
   List<Map<String, dynamic>> history = [];
   String expression = "sqrt{4+3}+4";
-  String memoryExpression = "";
+  double memoryExpression = 0;
   int openBrackets = 0;
 
   void openBracket() {
-    setState(() {
-      openBrackets += 1;
+    String lastChar = expression[expression.length - 1];
+
+    // because implicit multiplication is not allowed by the parser
+    if (lastChar.contains(RegExp(r'[0-9]'))) {
+      expression += "*(";
+    } else {
       expression += "(";
-    });
+    }
+    openBrackets += 1;
+
+    setState(() {});
   }
 
   void closeBracket() {
@@ -91,7 +98,13 @@ class _MyHomePageState extends State<MyHomePage> {
     expression += appendix;
   }
 
+  void addRandomNumberToExpression() {
+    expression += Random().nextDouble().toString();
+  }
+
   void deleteFromExpression() {
+    // TODO(Louis): Remove Squareroots
+
     String lastChar = expression[expression.length - 1];
     switch (lastChar) {
       case "}":
@@ -226,7 +239,21 @@ class _MyHomePageState extends State<MyHomePage> {
       case "delete":
         deleteFromExpression();
         break;
+      case "mc":
+        memoryExpression = 0.0;
+        break;
+      case "mr":
+        // could be that this has bugs
+        addNumberToExpression(memoryExpression.toString());
+        break;
+      case "m+":
+        addResultToMemory(subtract: false);
+        break;
+      case "m-":
+        addResultToMemory(subtract: true);
+        break;
       case "random number (0..1)":
+        addRandomNumberToExpression();
         break;
       default:
         print("Unhandled input!");
@@ -235,12 +262,30 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {});
   }
 
-  String getResultOfExpression(String expression) {
-    try {
+  void addResultToMemory({bool subtract = false}) {
+    double result = double.parse(getResultOfExpression().substring(2));
+    if (isExpressionValid()) {
+      memoryExpression += (subtract ? -result : result);
+    } else {
+      print("No valid result to add to memory");
+    }
+  }
+
+  String getResultOfExpression() {
+    if (isExpressionValid()) {
       return "= " +
           getExpression.interpret().toString().toSingleVariableFunction().tex;
-    } catch (e) {
+    } else {
       return "";
+    }
+  }
+
+  bool isExpressionValid() {
+    try {
+      getExpression.interpret().toString().toSingleVariableFunction().tex;
+      return true;
+    } catch (e) {
+      return false;
     }
   }
 
@@ -284,7 +329,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         height: 5,
                       ),
                       Math.tex(
-                        getResultOfExpression(expression),
+                        getResultOfExpression(),
                         textStyle: const TextStyle(
                           color: Colors.white38,
                           fontSize: 42,
