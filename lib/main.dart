@@ -203,7 +203,7 @@ class _MyHomePageState extends State<MyHomePage> {
     expr = expr.replaceAll("}", ")");
 
     // remove all leading zeros
-    expr.replaceFirst(RegExp(r'^0+'), "");
+    expr.replaceAll(RegExp(r'^0+'), "");
 
     return expr.isNotEmpty ? expr : "0";
   }
@@ -265,10 +265,30 @@ class _MyHomePageState extends State<MyHomePage> {
         addRandomNumberToExpression();
         break;
       case "ee":
-        print("EE");
         setState(() {
           scientificNotation = !scientificNotation;
         });
+        break;
+      case r"x^2":
+        addToExpression("^2");
+        break;
+      case r"x^3":
+        addToExpression("^3");
+        break;
+      case r"x^y":
+        addToExpression("^");
+        break;
+      case r"e^x":
+        addToExpression("e^");
+        break;
+      case r"10^x":
+        addToExpression("10^");
+        break;
+      case r"e":
+        addNumberToExpression("e");
+        break;
+      case r"\pi":
+        addNumberToExpression("pi");
         break;
       default:
         print("Unhandled input!");
