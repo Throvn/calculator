@@ -118,13 +118,13 @@ class _MyHomePageState extends State<MyHomePage> {
         scientificNotation = !scientificNotation;
         break;
       case r"x^2":
-        _calculator.expression.append("^2");
+        _calculator.expression.appendPower("2");
         break;
       case r"x^3":
-        _calculator.expression.append("^3");
+        _calculator.expression.appendPower("3");
         break;
       case r"x^y":
-        _calculator.expression.append("^{}");
+        _calculator.expression.appendPower("");
         break;
       case r"e^x":
         _calculator.expression.append("e^");
@@ -138,10 +138,16 @@ class _MyHomePageState extends State<MyHomePage> {
       case r"\pi":
         _calculator.expression.appendNumber("pi");
         break;
+      case "=":
+        print("Return result");
+        break;
       default:
         print("Unhandled input!");
         break;
     }
+
+    _calculator.expression.removeTrailingZero();
+
     setState(() {});
   }
 
@@ -328,6 +334,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: TextButton(
         onPressed: () {
           onButtonPress(text);
+          print(_calculator.expression.asLaTeX);
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateColor.resolveWith((states) => color),
@@ -364,6 +371,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: TextButton(
               onPressed: () {
                 onButtonPress(name);
+                print(_calculator.expression.asLaTeX);
               },
               child: icon,
               style: ButtonStyle(
@@ -393,6 +401,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: TextButton(
         onPressed: () {
           onButtonPress(tex);
+          print(_calculator.expression.asLaTeX);
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateColor.resolveWith((states) => color),

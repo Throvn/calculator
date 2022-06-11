@@ -11,6 +11,23 @@ class Expression {
     _expression = value;
   }
 
+  /// Checks whether the input seems to be a valid number. Based on the char it receives
+  bool isNumber(String text) {
+    // filter out numeric words
+    // e, sin, cos, log
+    if (text == "e" || text == "n" || text == "s" || text == "g") {
+      return true;
+    }
+    return double.tryParse(text) != null;
+  }
+
+  /// removes the first 0 if it is unneccessary
+  void removeTrailingZero() {
+    if (_expression != "0" && _expression[0] == "0" && isNumber(_expression[1])) {
+      _expression = _expression.replaceFirst("0", "");
+    }
+  }
+
   /// Sets the [_expression] variable.
   /// BE CAREFUL.
   set setExpression(String expression) {
@@ -80,7 +97,7 @@ class Expression {
     }
   }
 
-  /// simply adds the [appendinx] to the end of the [_expression].
+  /// simply adds the [appendix] to the end of the [_expression].
   /// Does no checking for errors whatsoever.
   void append(String appendix) {
     _expression += appendix;
@@ -90,6 +107,17 @@ class Expression {
   /// Does no checking for errors, whatsoever.
   void appendRandomNumber() {
     _expression += Random().nextDouble().toString();
+  }
+
+  /// Appends the power symbol to the end of the [_expression].
+  /// But there are some cases where this is not allowed (e.g. with brackets)
+  void appendPower(String number) {
+    String lastChar = _expression[_expression.length - 1];
+    if (number == "" && isNumber(lastChar)) {
+      _expression += ("^{}"); 
+    } else if (isNumber(lastChar)) {
+      _expression += ("^" + number); 
+    }
   }
 
   /// Sets the current value of the [_expression] to 0.
@@ -103,6 +131,12 @@ class Expression {
     // TODO(Louis): Remove Squareroots
 
     // ! Be careful -> _expression and expression are DIFFERENT!
+
+
+    if (_expression == "0") {
+      print("skipping deletion");
+      return;
+    }
 
     String lastChar = _expression[_expression.length - 1];
     switch (lastChar) {
@@ -124,6 +158,13 @@ class Expression {
         print("Deleted last");
         _expression = _expression.substring(0, _expression.length - 1);
     }
+  
+    // remove Clutter (e.g. if you delete ^3) -> also remove ^
+    while(_expression.isNotEmpty && !isNumber(_expression[_expression.length - 1]) || _expression[_expression.length - 1] == "{" || _expression[_expression.length - 1] == "(") {
+      print(_expression.length - 1);
+      _expression = _expression.substring(0, _expression.length - 1);
+    }
+
     print(_expression);
   }
 
@@ -185,6 +226,13 @@ class Expression {
       expr = temp;
     }
 
+    // if the last char is ^, render a placeholder
+    if (expr.lastIndexOf("^") == expr.length - 1) {
+      expr = expr.substring(0, expr.length - 1) + r"^{\square}"; 
+    } else if (expr.lastIndexOf("^{}") == expr.length - 3) {
+      expr = expr.substring(0, expr.length - 3) + r"^{\square}"; 
+    }
+
     return expr;
   }
 
@@ -202,11 +250,14 @@ class Expression {
   /// [scientificNotation] or normal notation.
   /// If [_expression] is invalid, returns empty string.
   String getResultAsString({required bool scientificNotation}) {
+
     if (isValid()) {
       String result = scientificNotation
           ? toString().interpret().toStringAsExponential()
           : toString().interpret().toString();
-      return "= " + result.toSingleVariableFunction().tex;
+      String texResult = result.toSingleVariableFunction().tex;
+      texResult = texResult.replaceAll("Infinity", r"\infty");
+      return "= " + texResult;
     } else {
       return "";
     }
