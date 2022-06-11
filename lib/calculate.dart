@@ -8,7 +8,7 @@ class Calculator {
   // the normal expression.
   // Has a special format, to be easily convertable
   // to latex and normal (function_tree) math.
-  Expression expression = Expression("sqrt{4+3}+4");
+  get expression => history.isNotEmpty ? history.last : Expression("0");
 
   // the memory _expression (same format as [_expression])
   double memory = 0.0;
@@ -27,6 +27,6 @@ class Calculator {
   /// Creates a class which can evaluate expressions,
   /// format the expression to latex and much more.
   Calculator(String startExpression) {
-    expression = Expression(startExpression);
+    history.add(Expression(startExpression));
   }
 }

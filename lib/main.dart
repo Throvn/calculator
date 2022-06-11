@@ -2,6 +2,7 @@ import 'package:calendar/calculate.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:flutter/material.dart';
+import 'expression.dart';
 
 void main() {
   runApp(const MyApp());
@@ -57,6 +58,8 @@ class _MyHomePageState extends State<MyHomePage> {
   // The brains of the operation :P
   final Calculator _calculator = Calculator("sqrt{3-2}+400-e^3");
   bool scientificNotation = false;
+
+  ScrollController historyScrollController = ScrollController(initialScrollOffset: 30);
 
   void onButtonPress(String buttonText) {
     switch (buttonText.toLowerCase()) {
@@ -140,6 +143,8 @@ class _MyHomePageState extends State<MyHomePage> {
         break;
       case "=":
         print("Return result");
+        _calculator.history.add(Expression(_calculator.expression.getResultAsDouble().toString()));
+        historyScrollController.animateTo(_calculator.history.length * 107, curve: Curves.linear, duration: const Duration(milliseconds: 300));
         break;
       default:
         print("Unhandled input!");
@@ -169,16 +174,18 @@ class _MyHomePageState extends State<MyHomePage> {
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
               child: ListView.separated(
-                separatorBuilder: (context, index) => const Divider(height: 30,),
+                controller: historyScrollController,
+                padding: const EdgeInsets.only(bottom: 100),
+                separatorBuilder: (context, index) => const Divider(height: 50),
                 scrollDirection: Axis.vertical,
-                itemCount: 2,
+                itemCount: _calculator.history.length,
                 itemBuilder: (_, index) =>
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Math.tex(
-                        _calculator.expression.asLaTeX,
+                        _calculator.history[index].asLaTeX,
                         textStyle: const TextStyle(
                           color: Colors.white,
                           fontSize: 42,
@@ -194,10 +201,10 @@ class _MyHomePageState extends State<MyHomePage> {
                         height: 15,
                       ),
                       Math.tex(
-                        _calculator.expression.getResultAsString(
+                        _calculator.history[index].getResultAsString(
                             scientificNotation: scientificNotation),
-                        textStyle: const TextStyle(
-                          color: Colors.white38,
+                        textStyle: TextStyle(
+                          color: index == _calculator.history.length - 1 ? Colors.white38 : Colors.white,
                           fontSize: 36,
                         ),
                       ),
