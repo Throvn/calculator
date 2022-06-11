@@ -14,8 +14,8 @@ class Expression {
   /// Checks whether the input seems to be a valid number. Based on the char it receives
   bool isNumber(String text) {
     // filter out numeric words
-    // e, sin, cos, log
-    if (text == "e" || text == "n" || text == "s" || text == "g") {
+    // e, sin, cos, log, pi
+    if (text == "e" || text == "n" || text == "s" || text == "g" || text == "i") {
       return true;
     }
     return double.tryParse(text) != null;
@@ -23,7 +23,7 @@ class Expression {
 
   /// removes the first 0 if it is unneccessary
   void removeTrailingZero() {
-    if (_expression != "0" && _expression[0] == "0" && isNumber(_expression[1])) {
+    if (_expression.length >= 2 && _expression != "0" && _expression[0] == "0" && isNumber(_expression[1])) {
       _expression = _expression.replaceFirst("0", "");
     }
   }
@@ -214,6 +214,9 @@ class Expression {
     // parse all squareroots to latex squareroots
     expr = expr.replaceAll("sqrt", r"\sqrt");
 
+    // represent pi as symbol
+    expr = expr.replaceAll("pi", r"\pi");
+
     // make sure exponentials are rendered correctly
     while (expr.contains("^(")) {
       int opening = expr.indexOf("^(");
@@ -229,7 +232,7 @@ class Expression {
     // if the last char is ^, render a placeholder
     if (expr.lastIndexOf("^") == expr.length - 1) {
       expr = expr.substring(0, expr.length - 1) + r"^{\square}"; 
-    } else if (expr.lastIndexOf("^{}") == expr.length - 3) {
+    } else if (expr.length >= 3 && expr.lastIndexOf("^{}") == expr.length - 3) {
       expr = expr.substring(0, expr.length - 3) + r"^{\square}"; 
     }
 

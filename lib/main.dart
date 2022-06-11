@@ -127,7 +127,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _calculator.expression.appendPower("");
         break;
       case r"e^x":
-        _calculator.expression.append("e^");
+        _calculator.expression.append("e^{}");
         break;
       case r"10^x":
         _calculator.expression.append("10^");
@@ -168,8 +168,11 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
-              child: ListView(
-                children: <Widget>[
+              child: ListView.separated(
+                separatorBuilder: (context, index) => const Divider(height: 30,),
+                scrollDirection: Axis.vertical,
+                itemCount: 2,
+                itemBuilder: (_, index) =>
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -188,19 +191,18 @@ class _MyHomePageState extends State<MyHomePage> {
                         ),
                       ),
                       const SizedBox(
-                        height: 5,
+                        height: 15,
                       ),
                       Math.tex(
                         _calculator.expression.getResultAsString(
                             scientificNotation: scientificNotation),
                         textStyle: const TextStyle(
                           color: Colors.white38,
-                          fontSize: 42,
+                          fontSize: 36,
                         ),
                       ),
                     ],
                   ),
-                ],
               ),
             ),
           ),
