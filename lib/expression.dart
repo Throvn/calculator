@@ -97,6 +97,21 @@ class Expression {
     }
   }
 
+  /// Appends a dot, but only if the previous input is a number and is integer.
+  void appendDot() {
+    // only add dots to numbers
+    if (double.tryParse(_expression[_expression.length - 1]) != null) {
+      // make sure that a dot is not previously in the same number.
+      if (_expression.lastIndexOf(".") != -1 && double.tryParse(_expression.substring(_expression.lastIndexOf("."))) != null) {
+        return;
+      }
+      if (_expression.length >= 2 && _expression[_expression.length - 2] == "^") {
+        return;
+      }
+      _expression += ".";
+    }
+  }
+
   /// simply adds the [appendix] to the end of the [_expression].
   /// Does no checking for errors whatsoever.
   void append(String appendix) {
@@ -198,13 +213,13 @@ class Expression {
     String expr = _expression;
 
     // parse all '/' to latex fractions
-    while (RegExp(r'([0-9]+|\(?.*\))\/(([0-9]+)|\(?.*?\)|)').hasMatch(expr)) {
+    while (RegExp(r'(([0-9]+|\(?.*\)|\.)+)\/((([0-9]+)|\(?.*?\)|\.|)+)').hasMatch(expr)) {
       RegExpMatch? match =
-          RegExp(r'([0-9]+|\(?.*\))\/(([0-9]+)|\(?.*?\)|)').firstMatch(expr);
+          RegExp(r'(([0-9]+|\(?.*\)|\.)+)\/((([0-9]+)|\(?.*?\)|\.|)+)').firstMatch(expr);
       if (match != null) {
         expr = expr.replaceFirstMapped(
-            RegExp(r'([0-9]+|\(?.*\))\/(([0-9]+)|\(?.*?\)|)'), (match) {
-          return r"\frac{" + match.group(1)! + "}{" + match.group(2)! + "}";
+            RegExp(r'(([0-9]+|\(?.*\)|\.)+)\/((([0-9]+)|\(?.*?\)|\.|)+)'), (match) {
+          return r"\frac{" + match.group(1)! + "}{" + match.group(3)! + "}";
         });
       }
     }

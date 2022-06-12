@@ -1,8 +1,12 @@
+import 'dart:math';
+
 import 'package:calendar/calculate.dart';
+import 'package:calendar/operands.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:flutter/material.dart';
-import 'expression.dart';
+import 'package:in_app_review/in_app_review.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,7 +32,7 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.orange,
       ),
       home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
@@ -56,7 +60,7 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   // set up the Calculator itself.
   // The brains of the operation :P
-  final Calculator _calculator = Calculator("sqrt{3-2}+400-e^3");
+  final Calculator _calculator = Calculator(Number(0));
   bool scientificNotation = false;
 
   ScrollController historyScrollController = ScrollController(initialScrollOffset: 30);
@@ -64,10 +68,10 @@ class _MyHomePageState extends State<MyHomePage> {
   void onButtonPress(String buttonText) {
     switch (buttonText.toLowerCase()) {
       case "(":
-        _calculator.expression.openBracket();
+        // _calculator.expression.openBracket();
         break;
       case ")":
-        _calculator.expression.closeBracket();
+        // _calculator.expression.closeBracket();
         break;
       case "0":
       case "1":
@@ -79,34 +83,39 @@ class _MyHomePageState extends State<MyHomePage> {
       case "7":
       case "8":
       case "9":
+        _calculator.expression.insertNumber(Number(num.parse(buttonText)));
+        break;
       case ".":
-        _calculator.expression.appendNumber(buttonText);
+        _calculator.expression.insertDot();
         break;
       case "–":
         // – and - are not the same.
-        _calculator.expression.append("-");
+        _calculator.expression.insertOperand("-");
         break;
       case "÷":
-        _calculator.expression.append("/");
+        _calculator.expression.insertOperand("/");
         break;
       case "+":
-        _calculator.expression.append(buttonText);
+        _calculator.expression.insertOperand("+");
         break;
       case "×":
-        _calculator.expression.append("*");
+        _calculator.expression.insertOperand("*");
+        break;
+      case r"\%":
+        _calculator.expression.makePercentage();
         break;
       case "c":
         _calculator.expression.reset();
         break;
       case "delete":
-        _calculator.expression.deleteLastCharacter();
+        // _calculator.expression.deleteLastCharacter();
         break;
       case "mc":
-        _calculator.memory = 0.0;
+        _calculator.memory = Number(0);
         break;
       case "mr":
         // could be that this has bugs
-        _calculator.expression.appendNumber(_calculator.memory.toString());
+        // _calculator.expression.appendNumber(_calculator.memory.toString());
         break;
       case "m+":
         _calculator.addResultToMemory(subtract: false);
@@ -114,44 +123,96 @@ class _MyHomePageState extends State<MyHomePage> {
       case "m-":
         _calculator.addResultToMemory(subtract: true);
         break;
+      case r"^+/_-":
+        _calculator.expression.switchSign();
+        break;
       case "random number (0..1)":
-        _calculator.expression.appendRandomNumber();
+        _calculator.expression.insertNumber(Number(Random().nextDouble()));
         break;
       case "ee":
         scientificNotation = !scientificNotation;
         break;
       case r"x^2":
-        _calculator.expression.appendPower("2");
+        _calculator.expression.insertOperand("x^2");
         break;
       case r"x^3":
-        _calculator.expression.appendPower("3");
+        _calculator.expression.insertOperand("x^3");
         break;
       case r"x^y":
-        _calculator.expression.appendPower("");
+        _calculator.expression.insertOperand("x^y");
         break;
       case r"e^x":
-        _calculator.expression.append("e^{}");
+        _calculator.expression.insertOperand("e^x");
         break;
       case r"10^x":
-        _calculator.expression.append("10^");
+        _calculator.expression.insertOperand("10^x");
         break;
       case r"e":
-        _calculator.expression.appendNumber("e");
+        _calculator.expression.insertNamedNumber(EulersNumber());
         break;
       case r"\pi":
-        _calculator.expression.appendNumber("pi");
+        _calculator.expression.insertNamedNumber(Pi());
+        break;
+      case r"\log_{10}":
+        _calculator.expression.insertOperand("log10");
+        break;
+      case r"\ln":
+        _calculator.expression.insertOperand("ln");
+        break;
+      case r"\sqrt[2]{x}":
+        _calculator.expression.insertOperand("sqrt");
+        break;
+      case r"\sqrt[3]{x}":
+        _calculator.expression.insertOperand("3rdrt");
+        break;
+      case r"\sqrt[y]{x}":
+        _calculator.expression.insertOperand("nthrt");
+        break;
+      case r"\frac{1}{x}":
+        _calculator.expression.insertOperand("1/x");
         break;
       case "=":
         print("Return result");
-        _calculator.history.add(Expression(_calculator.expression.getResultAsDouble().toString()));
+        // _calculator.history.add(Number(_calculator.expression.calculate()));
         historyScrollController.animateTo(_calculator.history.length * 107, curve: Curves.linear, duration: const Duration(milliseconds: 300));
+        break;
+      case "settings":
+        showAboutDialog(context: context,
+          applicationVersion: "v1.0.0",
+          applicationName: "Calculator",
+          applicationLegalese: "Made by Louis Stanko",
+          applicationIcon: Image.asset("assets/icon/icon.png", height: 85),
+          children: <Widget>[
+            const SizedBox(height: 30,),
+            const Text("Thanks for using my app. ❤️"),
+            const SizedBox(height: 5,),
+            const Text("It will NEVER have any advertisements and will ALWAYS be for free!"),
+            const SizedBox(height: 5,),
+            const Text("If you want to support me somehow,\nleaving a positive review in the App Store would help me out A LOT!"),
+            const SizedBox(height: 5,),
+            const Text("If you have noticed any bugs or issues, please report them on github."),
+            const SizedBox(height: 5,),
+            const Text("Icon made by Tristan Edwards."),
+            ButtonBar(
+              alignment: MainAxisAlignment.start,
+              children: [
+              ElevatedButton(onPressed: () => launchUrlString("https://github.com/Throvn/calculator/issues"), child: const Text("Report Issue")),
+              ElevatedButton(onPressed: () async {
+                InAppReview inAppReview = InAppReview.instance;
+                if (await inAppReview.isAvailable()) {
+                  inAppReview.requestReview();
+                }
+              }, child: const Text("Leave a Review")),
+            ],)
+          ]
+        );
         break;
       default:
         print("Unhandled input!");
         break;
     }
 
-    _calculator.expression.removeTrailingZero();
+    // _calculator.expression.removeTrailingZero();
 
     setState(() {});
   }
@@ -185,7 +246,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Math.tex(
-                        _calculator.history[index].asLaTeX,
+                        _calculator.history[index].toString(),
                         textStyle: const TextStyle(
                           color: Colors.white,
                           fontSize: 42,
@@ -201,8 +262,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         height: 15,
                       ),
                       Math.tex(
-                        _calculator.history[index].getResultAsString(
-                            scientificNotation: scientificNotation),
+                        scientificNotation ? _calculator.history[index].calculate().toStringAsExponential() : _calculator.history[index].calculate().toString(),
                         textStyle: TextStyle(
                           color: index == _calculator.history.length - 1 ? Colors.white38 : Colors.white,
                           fontSize: 36,
@@ -343,7 +403,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: TextButton(
         onPressed: () {
           onButtonPress(text);
-          print(_calculator.expression.asLaTeX);
+          print(_calculator.expression);
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateColor.resolveWith((states) => color),
@@ -380,7 +440,7 @@ class _MyHomePageState extends State<MyHomePage> {
             child: TextButton(
               onPressed: () {
                 onButtonPress(name);
-                print(_calculator.expression.asLaTeX);
+                print(_calculator.expression);
               },
               child: icon,
               style: ButtonStyle(
@@ -410,7 +470,7 @@ class _MyHomePageState extends State<MyHomePage> {
       child: TextButton(
         onPressed: () {
           onButtonPress(tex);
-          print(_calculator.expression.asLaTeX);
+          print(_calculator.expression);
         },
         style: ButtonStyle(
           backgroundColor: MaterialStateColor.resolveWith((states) => color),
