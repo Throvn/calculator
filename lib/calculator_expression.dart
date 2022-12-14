@@ -2,12 +2,12 @@ import 'dart:math';
 
 import 'package:function_tree/function_tree.dart';
 
-class Expression {
+class CalculatorExpression {
   String _expression = "sqrt{4+3}+4";
 
   /// Stores the mathexpression. Allows also modifications and
   /// calculations on it.
-  Expression(String value) {
+  CalculatorExpression(String value) {
     _expression = value;
   }
 
@@ -15,7 +15,11 @@ class Expression {
   bool isNumber(String text) {
     // filter out numeric words
     // e, sin, cos, log, pi
-    if (text == "e" || text == "n" || text == "s" || text == "g" || text == "i") {
+    if (text == "e" ||
+        text == "n" ||
+        text == "s" ||
+        text == "g" ||
+        text == "i") {
       return true;
     }
     return double.tryParse(text) != null;
@@ -23,7 +27,10 @@ class Expression {
 
   /// removes the first 0 if it is unneccessary
   void removeTrailingZero() {
-    if (_expression.length >= 2 && _expression != "0" && _expression[0] == "0" && isNumber(_expression[1])) {
+    if (_expression.length >= 2 &&
+        _expression != "0" &&
+        _expression[0] == "0" &&
+        isNumber(_expression[1])) {
       _expression = _expression.replaceFirst("0", "");
     }
   }
@@ -102,10 +109,14 @@ class Expression {
     // only add dots to numbers
     if (double.tryParse(_expression[_expression.length - 1]) != null) {
       // make sure that a dot is not previously in the same number.
-      if (_expression.lastIndexOf(".") != -1 && double.tryParse(_expression.substring(_expression.lastIndexOf("."))) != null) {
+      if (_expression.lastIndexOf(".") != -1 &&
+          double.tryParse(
+                  _expression.substring(_expression.lastIndexOf("."))) !=
+              null) {
         return;
       }
-      if (_expression.length >= 2 && _expression[_expression.length - 2] == "^") {
+      if (_expression.length >= 2 &&
+          _expression[_expression.length - 2] == "^") {
         return;
       }
       _expression += ".";
@@ -129,9 +140,9 @@ class Expression {
   void appendPower(String number) {
     String lastChar = _expression[_expression.length - 1];
     if (number == "" && isNumber(lastChar)) {
-      _expression += ("^{}"); 
+      _expression += ("^{}");
     } else if (isNumber(lastChar)) {
-      _expression += ("^" + number); 
+      _expression += ("^" + number);
     }
   }
 
@@ -146,7 +157,6 @@ class Expression {
     // TODO(Louis): Remove Squareroots
 
     // ! Be careful -> _expression and expression are DIFFERENT!
-
 
     if (_expression == "0") {
       print("skipping deletion");
@@ -173,9 +183,12 @@ class Expression {
         print("Deleted last");
         _expression = _expression.substring(0, _expression.length - 1);
     }
-  
+
     // remove Clutter (e.g. if you delete ^3) -> also remove ^
-    while(_expression.isNotEmpty && !isNumber(_expression[_expression.length - 1]) || _expression[_expression.length - 1] == "{" || _expression[_expression.length - 1] == "(") {
+    while (_expression.isNotEmpty &&
+            !isNumber(_expression[_expression.length - 1]) ||
+        _expression[_expression.length - 1] == "{" ||
+        _expression[_expression.length - 1] == "(") {
       print(_expression.length - 1);
       _expression = _expression.substring(0, _expression.length - 1);
     }
@@ -213,12 +226,15 @@ class Expression {
     String expr = _expression;
 
     // parse all '/' to latex fractions
-    while (RegExp(r'(([0-9]+|\(?.*\)|\.)+)\/((([0-9]+)|\(?.*?\)|\.|)+)').hasMatch(expr)) {
+    while (RegExp(r'(([0-9]+|\(?.*\)|\.)+)\/((([0-9]+)|\(?.*?\)|\.|)+)')
+        .hasMatch(expr)) {
       RegExpMatch? match =
-          RegExp(r'(([0-9]+|\(?.*\)|\.)+)\/((([0-9]+)|\(?.*?\)|\.|)+)').firstMatch(expr);
+          RegExp(r'(([0-9]+|\(?.*\)|\.)+)\/((([0-9]+)|\(?.*?\)|\.|)+)')
+              .firstMatch(expr);
       if (match != null) {
         expr = expr.replaceFirstMapped(
-            RegExp(r'(([0-9]+|\(?.*\)|\.)+)\/((([0-9]+)|\(?.*?\)|\.|)+)'), (match) {
+            RegExp(r'(([0-9]+|\(?.*\)|\.)+)\/((([0-9]+)|\(?.*?\)|\.|)+)'),
+            (match) {
           return r"\frac{" + match.group(1)! + "}{" + match.group(3)! + "}";
         });
       }
@@ -246,9 +262,9 @@ class Expression {
 
     // if the last char is ^, render a placeholder
     if (expr.lastIndexOf("^") == expr.length - 1) {
-      expr = expr.substring(0, expr.length - 1) + r"^{\square}"; 
+      expr = expr.substring(0, expr.length - 1) + r"^{\square}";
     } else if (expr.length >= 3 && expr.lastIndexOf("^{}") == expr.length - 3) {
-      expr = expr.substring(0, expr.length - 3) + r"^{\square}"; 
+      expr = expr.substring(0, expr.length - 3) + r"^{\square}";
     }
 
     return expr;
@@ -268,7 +284,6 @@ class Expression {
   /// [scientificNotation] or normal notation.
   /// If [_expression] is invalid, returns empty string.
   String getResultAsString({required bool scientificNotation}) {
-
     if (isValid()) {
       String result = scientificNotation
           ? toString().interpret().toStringAsExponential()

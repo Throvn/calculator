@@ -1,12 +1,15 @@
 import 'dart:math';
 
 import 'package:calendar/calculate.dart';
-import 'package:calendar/operands.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:url_launcher/url_launcher_string.dart';
+
+import 'operands/eulers_number.dart';
+import 'operands/number.dart';
+import 'operands/pi.dart';
 
 void main() {
   runApp(const MyApp());
@@ -63,7 +66,8 @@ class _MyHomePageState extends State<MyHomePage> {
   final Calculator _calculator = Calculator(Number(0));
   bool scientificNotation = false;
 
-  ScrollController historyScrollController = ScrollController(initialScrollOffset: 30);
+  ScrollController historyScrollController =
+      ScrollController(initialScrollOffset: 30);
 
   void onButtonPress(String buttonText) {
     switch (buttonText.toLowerCase()) {
@@ -174,38 +178,58 @@ class _MyHomePageState extends State<MyHomePage> {
       case "=":
         print("Return result");
         // _calculator.history.add(Number(_calculator.expression.calculate()));
-        historyScrollController.animateTo(_calculator.history.length * 107, curve: Curves.linear, duration: const Duration(milliseconds: 300));
+        historyScrollController.animateTo(_calculator.history.length * 107,
+            curve: Curves.linear, duration: const Duration(milliseconds: 300));
         break;
       case "settings":
-        showAboutDialog(context: context,
-          applicationVersion: "v1.0.0",
-          applicationName: "Calculator",
-          applicationLegalese: "Made by Louis Stanko",
-          applicationIcon: Image.asset("assets/icon/icon.png", height: 85),
-          children: <Widget>[
-            const SizedBox(height: 30,),
-            const Text("Thanks for using my app. ❤️"),
-            const SizedBox(height: 5,),
-            const Text("It will NEVER have any advertisements and will ALWAYS be for free!"),
-            const SizedBox(height: 5,),
-            const Text("If you want to support me somehow,\nleaving a positive review in the App Store would help me out A LOT!"),
-            const SizedBox(height: 5,),
-            const Text("If you have noticed any bugs or issues, please report them on github."),
-            const SizedBox(height: 5,),
-            const Text("Icon made by Tristan Edwards."),
-            ButtonBar(
-              alignment: MainAxisAlignment.start,
-              children: [
-              ElevatedButton(onPressed: () => launchUrlString("https://github.com/Throvn/calculator/issues"), child: const Text("Report Issue")),
-              ElevatedButton(onPressed: () async {
-                InAppReview inAppReview = InAppReview.instance;
-                if (await inAppReview.isAvailable()) {
-                  inAppReview.requestReview();
-                }
-              }, child: const Text("Leave a Review")),
-            ],)
-          ]
-        );
+        showAboutDialog(
+            context: context,
+            applicationVersion: "v1.0.0",
+            applicationName: "Calculator",
+            applicationLegalese: "Made by Louis Stanko",
+            applicationIcon: Image.asset("assets/icon/icon.png", height: 85),
+            children: <Widget>[
+              const SizedBox(
+                height: 30,
+              ),
+              const Text("Thanks for using my app. ❤️"),
+              const SizedBox(
+                height: 5,
+              ),
+              const Text(
+                  "It will NEVER have any advertisements and will ALWAYS be for free!"),
+              const SizedBox(
+                height: 5,
+              ),
+              const Text(
+                  "If you want to support me somehow,\nleaving a positive review in the App Store would help me out A LOT!"),
+              const SizedBox(
+                height: 5,
+              ),
+              const Text(
+                  "If you have noticed any bugs or issues, please report them on github."),
+              const SizedBox(
+                height: 5,
+              ),
+              const Text("Icon made by Tristan Edwards."),
+              ButtonBar(
+                alignment: MainAxisAlignment.start,
+                children: [
+                  ElevatedButton(
+                      onPressed: () => launchUrlString(
+                          "https://github.com/Throvn/calculator/issues"),
+                      child: const Text("Report Issue")),
+                  ElevatedButton(
+                      onPressed: () async {
+                        InAppReview inAppReview = InAppReview.instance;
+                        if (await inAppReview.isAvailable()) {
+                          inAppReview.requestReview();
+                        }
+                      },
+                      child: const Text("Leave a Review")),
+                ],
+              )
+            ]);
         break;
       default:
         print("Unhandled input!");
@@ -240,36 +264,41 @@ class _MyHomePageState extends State<MyHomePage> {
                 separatorBuilder: (context, index) => const Divider(height: 50),
                 scrollDirection: Axis.vertical,
                 itemCount: _calculator.history.length,
-                itemBuilder: (_, index) =>
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Math.tex(
-                        _calculator.history[index].toString(),
-                        textStyle: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 42,
-                        ),
-                        onErrorFallback: (FlutterMathException e) => const Text(
-                          "Invalid equation",
-                          style: TextStyle(
-                            color: Colors.red,
-                          ),
+                itemBuilder: (_, index) => Column(
+                  crossAxisAlignment: CrossAxisAlignment.end,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Math.tex(
+                      _calculator.history[index].toString(),
+                      textStyle: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 42,
+                      ),
+                      onErrorFallback: (FlutterMathException e) => const Text(
+                        "Invalid equation",
+                        style: TextStyle(
+                          color: Colors.red,
                         ),
                       ),
-                      const SizedBox(
-                        height: 15,
+                    ),
+                    const SizedBox(
+                      height: 15,
+                    ),
+                    Math.tex(
+                      scientificNotation
+                          ? _calculator.history[index]
+                              .calculate()
+                              .toStringAsExponential()
+                          : _calculator.history[index].calculate().toString(),
+                      textStyle: TextStyle(
+                        color: index == _calculator.history.length - 1
+                            ? Colors.white38
+                            : Colors.white,
+                        fontSize: 36,
                       ),
-                      Math.tex(
-                        scientificNotation ? _calculator.history[index].calculate().toStringAsExponential() : _calculator.history[index].calculate().toString(),
-                        textStyle: TextStyle(
-                          color: index == _calculator.history.length - 1 ? Colors.white38 : Colors.white,
-                          fontSize: 36,
-                        ),
-                      ),
-                    ],
-                  ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

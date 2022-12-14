@@ -1,4 +1,15 @@
-import 'package:calendar/operands.dart';
+import 'operands/eulers_number.dart';
+import 'operands/expression.dart';
+import 'operands/addition.dart';
+import 'operands/fillable.dart';
+import 'operands/fraction.dart';
+import 'operands/logarithm.dart';
+import 'operands/multiplication.dart';
+import 'operands/number.dart';
+import 'operands/operator.dart';
+import 'operands/power.dart';
+import 'operands/root.dart';
+import 'operands/subtraction.dart';
 
 class Calculator {
   List<Calculation> history = [];
@@ -6,7 +17,8 @@ class Calculator {
   // the normal expression.
   // Has a special format, to be easily convertable
   // to latex and normal (function_tree) math.
-  Calculation get expression => history.isNotEmpty ? history.last : Calculation(Number(0));
+  Calculation get expression =>
+      history.isNotEmpty ? history.last : Calculation(Number(0));
 
   // the memory _expression (same format as [_expression])
   Expression memory = Number(0);
@@ -15,8 +27,8 @@ class Calculator {
   /// it subtracts the result from the value stored in [memory].
   void addResultToMemory({bool subtract = false}) {
     // if (expression.isValid()) {
-      // double result = expression.getResultAsDouble();
-      // memory += (subtract ? -result : result);
+    // double result = expression.getResultAsDouble();
+    // memory += (subtract ? -result : result);
     // } else {
     //   print("No valid result to add to memory");
     // }
@@ -59,17 +71,19 @@ class Calculation {
         pointer!.right = number;
         pointer = null;
       }
-    } else if(_expression is Number && (_expression as Number).value == 0) {
+    } else if (_expression is Number && (_expression as Number).value == 0) {
       _expression = number;
     }
   }
 
   void switchSign() {
     if (pointer == null) {
-      if(_expression is Number) {
+      if (_expression is Number) {
         // should always switch the sign, thats why the equality operator is changed.
-        (_expression as Number).switchSign(positive: (_expression as Number).sign < 0);
-      } else if (_expression is Operator && (_expression as Operator).right is Number) {
+        (_expression as Number)
+            .switchSign(positive: (_expression as Number).sign < 0);
+      } else if (_expression is Operator &&
+          (_expression as Operator).right is Number) {
         Number currentNumber = (_expression as Operator).right as Number;
         currentNumber.switchSign(positive: currentNumber.sign < 0);
       }
@@ -85,9 +99,16 @@ class Calculation {
         pointer!.right = number;
         pointer = null;
       }
-    } else if(_expression is Number && num.tryParse((_expression as Number).toString() + number.toString()) != null) {
-      (_expression as Number).setValue((_expression as Number).toString() + number.toString());
-    } else if (_expression is Operator && (_expression as Operator).right is Number && num.tryParse(((_expression as Operator).right as Number).toString() + number.toString()) != null) {
+    } else if (_expression is Number &&
+        num.tryParse((_expression as Number).toString() + number.toString()) !=
+            null) {
+      (_expression as Number)
+          .setValue((_expression as Number).toString() + number.toString());
+    } else if (_expression is Operator &&
+        (_expression as Operator).right is Number &&
+        num.tryParse(((_expression as Operator).right as Number).toString() +
+                number.toString()) !=
+            null) {
       Number currentNumber = (_expression as Operator).right as Number;
       currentNumber.setValue(currentNumber.toString() + number.toString());
     }
@@ -96,9 +117,11 @@ class Calculation {
   void insertDot() {
     if (pointer == null) {
       print(_expression.runtimeType);
-      if(_expression is Number && double.tryParse((_expression as Number).toString() + ".0") != null) {
+      if (_expression is Number &&
+          double.tryParse((_expression as Number).toString() + ".0") != null) {
         (_expression as Number).isDouble = true;
-      } else if (_expression is Operator && (_expression as Operator).right is Number) {
+      } else if (_expression is Operator &&
+          (_expression as Operator).right is Number) {
         Number currentNumber = (_expression as Operator).right as Number;
         if (double.tryParse(currentNumber.toString() + ".0") != null) {
           currentNumber.isDouble = true;
@@ -112,7 +135,7 @@ class Calculation {
     if (pointer == null) {
       _expression = symbolToOperand(symbol, _expression);
       if ((_expression as Operator).isFillable) {
-        pointer = _expression as Operator; 
+        pointer = _expression as Operator;
       } else {
         pointer = null;
       }
@@ -121,9 +144,11 @@ class Calculation {
 
   void makePercentage() {
     if (pointer == null) {
-      if(_expression is Number) {
-        (_expression as Number).setValue(((_expression as Number).value / 100).toString());
-      } else if (_expression is Operator && (_expression as Operator).right is Number) {
+      if (_expression is Number) {
+        (_expression as Number)
+            .setValue(((_expression as Number).value / 100).toString());
+      } else if (_expression is Operator &&
+          (_expression as Operator).right is Number) {
         Number currentNumber = (_expression as Operator).right as Number;
         currentNumber.setValue((currentNumber.value / 100).toString());
       }
