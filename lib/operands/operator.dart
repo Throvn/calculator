@@ -12,4 +12,7 @@ abstract class Operator extends Expression {
   String toString() => "${left.asLaTeX} $op ${right.asLaTeX}";
 
   bool get isFillable => left is Fillable || right is Fillable;
+
+  @override
+  String get toAscii => "${left.toAscii} $op ${right.toAscii}";
 }

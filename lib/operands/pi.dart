@@ -6,4 +6,7 @@ class Pi extends Number {
 
   @override
   String toString() => r"\pi";
+
+  @override
+  String get toAscii => "π";
 }

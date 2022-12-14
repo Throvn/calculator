@@ -6,4 +6,7 @@ class EulersNumber extends Number {
 
   @override
   String toString() => r"e";
+
+  @override
+  String get toAscii => "e";
 }

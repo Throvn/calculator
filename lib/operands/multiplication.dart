@@ -9,4 +9,7 @@ class Multiplication extends Operator {
 
   @override
   String toString() => left.toString() + r"\cdot" + right.toString();
+
+  @override
+  String get toAscii => "${left.toAscii} x ${right.toAscii}";
 }

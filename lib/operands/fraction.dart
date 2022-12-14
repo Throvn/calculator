@@ -10,4 +10,7 @@ class Fraction extends Operator {
   @override
   String toString() =>
       r"\frac{" + left.toString() + "}{" + right.toString() + "}";
+
+  @override
+  String get toAscii => "(${left.toAscii} / ${right.toAscii})";
 }

@@ -225,7 +225,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         fontSize: 42,
                       ),
                       onErrorFallback: (FlutterMathException e) => Text(
-                        _calculator.history[index].toString(),
+                        _calculator.history[index].toAscii,
                         style:
                             TextStyle(color: CustomColors.danger, fontSize: 42),
                       ),

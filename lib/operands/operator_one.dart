@@ -8,4 +8,7 @@ abstract class OperatorOne extends Expression {
 
   @override
   String toString() => "$op $right";
+
+  @override
+  String get toAscii => "$op ${right.toAscii}";
 }

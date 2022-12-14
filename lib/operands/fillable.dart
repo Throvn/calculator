@@ -6,4 +6,7 @@ class Fillable extends Expression {
 
   @override
   num calculate() => 0.0;
+
+  @override
+  String get toAscii => "_";
 }

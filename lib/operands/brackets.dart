@@ -9,4 +9,7 @@ class Brackets extends OperatorOne {
 
   @override
   num calculate() => right.calculate();
+
+  @override
+  String get toAscii => "(${right.toAscii})";
 }

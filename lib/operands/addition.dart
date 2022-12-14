@@ -9,4 +9,7 @@ class Addition extends Operator {
 
   @override
   String toString() => "${left.toString()} + ${right.toString()}";
+
+  @override
+  String get toAscii => "${left.toAscii} + ${right.toAscii}";
 }

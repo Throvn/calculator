@@ -10,4 +10,7 @@ class Sign extends Subtraction {
 
   @override
   num calculate() => op == "+" ? right.calculate() : -right.calculate();
+
+  @override
+  String get toAscii => "($op ${right.toAscii})";
 }

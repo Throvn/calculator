@@ -38,4 +38,7 @@ class Number extends Expression {
         ? "(" + value.toString() + ".)"
         : value.toString() + ".";
   }
+
+  @override
+  String get toAscii => toString();
 }

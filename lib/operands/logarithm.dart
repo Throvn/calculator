@@ -15,4 +15,9 @@ class Logarithm extends Operator {
   String toString() => left.runtimeType == EulersNumber
       ? r"\ln{(" + right.toString() + ")}"
       : r"\log_{" + left.toString() + "}(" + right.toString() + ")";
+
+  @override
+  String get toAscii => left.runtimeType == EulersNumber
+      ? r"ln(" + right.toAscii + ")"
+      : r"log" + left.toAscii + "(" + right.toAscii + ")";
 }

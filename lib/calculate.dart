@@ -57,6 +57,8 @@ class Calculation {
     return _expression.toString();
   }
 
+  String get toAscii => _expression.toAscii;
+
   void reset() {
     _expression = Number(0);
     pointer = null;

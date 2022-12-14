@@ -12,4 +12,7 @@ class Factorial extends OperatorOne {
 
   @override
   num calculate() => double.nan;
+
+  @override
+  String get toAscii => "${super.right.toAscii}!";
 }

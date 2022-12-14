@@ -6,4 +6,7 @@ class EmptyZero extends Expression {
 
   @override
   String toString() => "";
+
+  @override
+  String get toAscii => "";
 }
