@@ -7,6 +7,10 @@ import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
+import 'buttons/helper.dart';
+import 'buttons/icon_button.dart';
+import 'buttons/normal_button.dart';
+import 'buttons/tex_button.dart';
 import 'operands/eulers_number.dart';
 import 'operands/number.dart';
 import 'operands/pi.dart';
@@ -14,8 +18,6 @@ import 'operands/pi.dart';
 void main() {
   runApp(const MyApp());
 }
-
-enum Priority { low, medium, high, highest }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -69,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
   ScrollController historyScrollController =
       ScrollController(initialScrollOffset: 30);
 
-  void onButtonPress(String buttonText) {
+  void buttonPressed(String buttonText) {
     switch (buttonText.toLowerCase()) {
       case "(":
         // _calculator.expression.openBracket();
@@ -243,11 +245,6 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    // Parse expression:
-
-    // This method is rerun every time setState is called, for instance as done
-    // by the _incrementCounter method above.
-    //
     // The Flutter framework has been optimized to make rerunning build methods
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
@@ -274,11 +271,9 @@ class _MyHomePageState extends State<MyHomePage> {
                         color: Colors.white,
                         fontSize: 42,
                       ),
-                      onErrorFallback: (FlutterMathException e) => const Text(
-                        "Invalid equation",
-                        style: TextStyle(
-                          color: Colors.red,
-                        ),
+                      onErrorFallback: (FlutterMathException e) => Text(
+                        _calculator.history[index].toString(),
+                        style: const TextStyle(color: Colors.red, fontSize: 42),
                       ),
                     ),
                     const SizedBox(
@@ -305,19 +300,30 @@ class _MyHomePageState extends State<MyHomePage> {
           // now the keys are coming
           Row(
             children: [
-              normalButton("(", context, Priority.highest),
-              normalButton(")", context, Priority.highest),
-              normalButton("mc", context, Priority.medium),
-              normalButton("m+", context, Priority.medium),
-              normalButton("m-", context, Priority.low),
-              normalButton("mr", context, Priority.medium),
-              normalButton("C", context, Priority.highest),
-              texButton(r"^+/_-", context, Priority.high),
-              texButton(r"\%", context, Priority.medium),
+              normalButton("(", context, Priority.highest, buttonPressed),
+              normalButton(")", context, Priority.highest, buttonPressed),
+              normalButton("mc", context, Priority.medium, buttonPressed),
+              normalButton("m+", context, Priority.medium, buttonPressed),
+              normalButton("m-", context, Priority.low, buttonPressed),
+              normalButton("mr", context, Priority.medium, buttonPressed),
+              normalButton("C", context, Priority.highest, buttonPressed),
+              texButton(
+                r"^+/_-",
+                context,
+                Priority.high,
+                buttonPressed,
+              ),
+              texButton(
+                r"\%",
+                context,
+                Priority.medium,
+                buttonPressed,
+              ),
               normalButton(
                 "÷",
                 context,
                 Priority.highest,
+                buttonPressed,
                 color: const Color(0xFFF0A500),
               ),
             ],
@@ -328,91 +334,108 @@ class _MyHomePageState extends State<MyHomePage> {
                 CupertinoIcons.settings,
                 context,
                 Priority.high,
+                buttonPressed,
                 name: "Settings",
               ),
-              texButton(r"x^2", context, Priority.medium),
-              texButton(r"x^3", context, Priority.medium),
-              texButton(r"x^y", context, Priority.medium),
-              texButton(r"e^x", context, Priority.medium),
-              texButton(r"10^x", context, Priority.low),
-              normalButton("7", context, Priority.highest,
+              texButton(r"x^2", context, Priority.medium, buttonPressed),
+              texButton(r"x^3", context, Priority.medium, buttonPressed),
+              texButton(r"x^y", context, Priority.medium, buttonPressed),
+              texButton(r"e^x", context, Priority.medium, buttonPressed),
+              texButton(r"10^x", context, Priority.low, buttonPressed),
+              normalButton("7", context, Priority.highest, buttonPressed,
                   color: const Color(0xFF625B5B)),
-              normalButton("8", context, Priority.highest,
+              normalButton("8", context, Priority.highest, buttonPressed,
                   color: const Color(0xFF625B5B)),
-              normalButton("9", context, Priority.highest,
+              normalButton("9", context, Priority.highest, buttonPressed,
                   color: const Color(0xFF625B5B)),
               normalButton(
                 "×",
                 context,
                 Priority.highest,
+                buttonPressed,
                 color: const Color(0xFFF0A500),
               ),
             ],
           ),
           Row(
             children: [
-              texButton(r"\frac{1}{x}", context, Priority.low),
-              texButton(r"\sqrt[2]{x}", context, Priority.high),
-              texButton(r"\sqrt[3]{x}", context, Priority.medium),
-              texButton(r"\sqrt[y]{x}", context, Priority.medium),
-              texButton(r"\ln", context, Priority.medium),
-              texButton(r"\log_{10}", context, Priority.medium),
-              normalButton("4", context, Priority.highest,
+              texButton(r"\frac{1}{x}", context, Priority.low, buttonPressed),
+              texButton(r"\sqrt[2]{x}", context, Priority.high, buttonPressed),
+              texButton(
+                  r"\sqrt[3]{x}", context, Priority.medium, buttonPressed),
+              texButton(
+                  r"\sqrt[y]{x}", context, Priority.medium, buttonPressed),
+              texButton(r"\ln", context, Priority.medium, buttonPressed),
+              texButton(r"\log_{10}", context, Priority.medium, buttonPressed),
+              normalButton("4", context, Priority.highest, buttonPressed,
                   color: const Color(0xFF625B5B)),
-              normalButton("5", context, Priority.highest,
+              normalButton("5", context, Priority.highest, buttonPressed,
                   color: const Color(0xFF625B5B)),
-              normalButton("6", context, Priority.highest,
+              normalButton("6", context, Priority.highest, buttonPressed,
                   color: const Color(0xFF625B5B)),
               normalButton(
                 "–",
                 context,
                 Priority.highest,
+                buttonPressed,
                 color: const Color(0xFFF0A500),
               ),
             ],
           ),
           Row(
             children: [
-              texButton(r"x!", context, Priority.medium),
-              texButton(r"\sin", context, Priority.medium),
-              texButton(r"\cos", context, Priority.medium),
-              texButton(r"\tan", context, Priority.low),
-              texButton(r"e", context, Priority.high),
-              normalButton("EE", context, Priority.medium),
-              normalButton("1", context, Priority.highest,
+              texButton(r"x!", context, Priority.medium, buttonPressed),
+              texButton(r"\sin", context, Priority.medium, buttonPressed),
+              texButton(r"\cos", context, Priority.medium, buttonPressed),
+              texButton(r"\tan", context, Priority.low, buttonPressed),
+              texButton(r"e", context, Priority.high, buttonPressed),
+              normalButton("EE", context, Priority.medium, buttonPressed),
+              normalButton("1", context, Priority.highest, buttonPressed,
                   color: const Color(0xFF625B5B)),
-              normalButton("2", context, Priority.highest,
+              normalButton("2", context, Priority.highest, buttonPressed,
                   color: const Color(0xFF625B5B)),
-              normalButton("3", context, Priority.highest,
+              normalButton("3", context, Priority.highest, buttonPressed,
                   color: const Color(0xFF625B5B)),
               normalButton(
                 "+",
                 context,
                 Priority.highest,
+                buttonPressed,
                 color: const Color(0xFFF0A500),
               ),
             ],
           ),
           Row(
             children: [
-              normalButton("Rad", context, Priority.medium),
-              texButton(r"\sinh", context, Priority.medium),
-              texButton(r"\cosh", context, Priority.medium),
-              texButton(r"\tanh", context, Priority.low),
-              texButton(r"\pi", context, Priority.high),
+              normalButton("Rad", context, Priority.medium, buttonPressed),
+              texButton(r"\sinh", context, Priority.medium, buttonPressed),
+              texButton(r"\cosh", context, Priority.medium, buttonPressed),
+              texButton(r"\tanh", context, Priority.low, buttonPressed),
+              texButton(r"\pi", context, Priority.high, buttonPressed),
               iconButton(
-                  CupertinoIcons.question_square, context, Priority.medium,
-                  name: "Random Number (0..1)"),
-              normalButton(".", context, Priority.highest,
+                CupertinoIcons.question_square,
+                context,
+                Priority.medium,
+                buttonPressed,
+                name: "Random Number (0..1)",
+              ),
+              normalButton(".", context, Priority.highest, buttonPressed,
                   color: const Color(0xFF625B5B)),
-              normalButton("0", context, Priority.highest,
+              normalButton("0", context, Priority.highest, buttonPressed,
                   color: const Color(0xFF625B5B)),
-              iconButton(CupertinoIcons.delete_left, context, Priority.highest,
-                  color: const Color(0xFFE84545), name: "Delete"),
+              iconButton(
+                CupertinoIcons.delete_left,
+                context,
+                Priority.highest,
+                buttonPressed,
+                color: const Color(0xFFE84545),
+                name: "Delete",
+              ),
               normalButton(
                 "=",
                 context,
                 Priority.highest,
+                buttonPressed,
                 color: const Color(0xFFF0A500),
               ),
             ],
@@ -421,145 +444,4 @@ class _MyHomePageState extends State<MyHomePage> {
       ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
-
-  Widget normalButton(String text, BuildContext context, Priority priority,
-      {Color color = const Color(0xFF433A3A)}) {
-    double buttonSize = calculateButtonSize(priority, context);
-
-    return SizedBox(
-      width: buttonSize,
-      height: buttonSize,
-      child: TextButton(
-        onPressed: () {
-          onButtonPress(text);
-          print(_calculator.expression);
-        },
-        style: ButtonStyle(
-          backgroundColor: MaterialStateColor.resolveWith((states) => color),
-          foregroundColor:
-              MaterialStateColor.resolveWith((states) => Colors.white),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            const RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero,
-              side: BorderSide(color: Color(0xFF1F1F1F), width: 0.5),
-            ),
-          ),
-        ),
-        child: Text(
-          text,
-          style: const TextStyle(fontSize: 42),
-        ),
-      ),
-    );
-  }
-
-  Widget iconButton(IconData xIcon, BuildContext context, Priority priority,
-      {Color color = const Color(0xFF433A3A), required String name}) {
-    Icon icon = Icon(xIcon, size: 42);
-
-    double buttonSize = calculateButtonSize(priority, context);
-
-    return SizedBox(
-      width: buttonSize,
-      height: buttonSize,
-      child: Container(
-          color: color,
-          child: Tooltip(
-            message: name,
-            child: TextButton(
-              onPressed: () {
-                onButtonPress(name);
-                print(_calculator.expression);
-              },
-              child: icon,
-              style: ButtonStyle(
-                backgroundColor:
-                    MaterialStateColor.resolveWith((states) => color),
-                foregroundColor:
-                    MaterialStateColor.resolveWith((states) => Colors.white),
-                shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-                  const RoundedRectangleBorder(
-                    borderRadius: BorderRadius.zero,
-                    side: BorderSide(color: Color(0xFF1F1F1F), width: 0.5),
-                  ),
-                ),
-              ),
-            ),
-          )),
-    );
-  }
-
-  Widget texButton(String tex, BuildContext context, Priority priority,
-      {Color color = const Color(0xFF433A3A)}) {
-    double buttonSize = calculateButtonSize(priority, context);
-
-    return SizedBox(
-      width: buttonSize,
-      height: buttonSize,
-      child: TextButton(
-        onPressed: () {
-          onButtonPress(tex);
-          print(_calculator.expression);
-        },
-        style: ButtonStyle(
-          backgroundColor: MaterialStateColor.resolveWith((states) => color),
-          foregroundColor:
-              MaterialStateColor.resolveWith((states) => Colors.white),
-          shape: MaterialStateProperty.all<RoundedRectangleBorder>(
-            const RoundedRectangleBorder(
-              borderRadius: BorderRadius.zero,
-              side: BorderSide(color: Color(0xFF1F1F1F), width: 0.5),
-            ),
-          ),
-        ),
-        child: Math.tex(
-          tex,
-          options: MathOptions(fontSize: 35, color: Colors.white),
-          onErrorFallback: (FlutterMathException e) => const Text(
-            "Math Error!",
-            style: TextStyle(
-              color: Colors.red,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-double calculateButtonSize(Priority priority, BuildContext context) {
-  double windowWidth = MediaQuery.of(context).size.width;
-  if (windowWidth <= 400) {
-    switch (priority) {
-      case Priority.highest:
-        return windowWidth / 4;
-      case Priority.high:
-      case Priority.medium:
-      case Priority.low:
-      default:
-        return 0.0;
-    }
-  } else if (windowWidth <= 700) {
-    switch (priority) {
-      case Priority.highest:
-      case Priority.high:
-        return windowWidth / 5;
-      case Priority.medium:
-      case Priority.low:
-      default:
-        return 0.0;
-    }
-  } else if (windowWidth <= 900) {
-    switch (priority) {
-      case Priority.medium:
-      case Priority.high:
-      case Priority.highest:
-        return windowWidth / 9;
-      case Priority.low:
-      default:
-        return 0.0;
-    }
-  }
-
-  return windowWidth / 10;
 }
