@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:calendar/calculate.dart';
+import 'package:calendar/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:flutter/material.dart';
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
         // is not restarted.
         primarySwatch: Colors.orange,
       ),
-      home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      home: const MyHomePage(title: 'Calculator'),
     );
   }
 }
@@ -249,7 +250,7 @@ class _MyHomePageState extends State<MyHomePage> {
     // fast, so that you can just rebuild anything that needs updating rather
     // than having to individually change instances of widgets.
     return Scaffold(
-      backgroundColor: const Color(0xFF1F1F1F),
+      backgroundColor: CustomColors.background,
       body: Column(
         children: <Widget>[
           Expanded(
@@ -273,7 +274,8 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                       onErrorFallback: (FlutterMathException e) => Text(
                         _calculator.history[index].toString(),
-                        style: const TextStyle(color: Colors.red, fontSize: 42),
+                        style:
+                            TextStyle(color: CustomColors.danger, fontSize: 42),
                       ),
                     ),
                     const SizedBox(
@@ -324,7 +326,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 context,
                 Priority.highest,
                 buttonPressed,
-                color: const Color(0xFFF0A500),
+                color: CustomColors.warning,
               ),
             ],
           ),
@@ -343,17 +345,17 @@ class _MyHomePageState extends State<MyHomePage> {
               texButton(r"e^x", context, Priority.medium, buttonPressed),
               texButton(r"10^x", context, Priority.low, buttonPressed),
               normalButton("7", context, Priority.highest, buttonPressed,
-                  color: const Color(0xFF625B5B)),
+                  color: CustomColors.secondary),
               normalButton("8", context, Priority.highest, buttonPressed,
-                  color: const Color(0xFF625B5B)),
+                  color: CustomColors.secondary),
               normalButton("9", context, Priority.highest, buttonPressed,
-                  color: const Color(0xFF625B5B)),
+                  color: CustomColors.secondary),
               normalButton(
                 "×",
                 context,
                 Priority.highest,
                 buttonPressed,
-                color: const Color(0xFFF0A500),
+                color: CustomColors.warning,
               ),
             ],
           ),
@@ -368,17 +370,17 @@ class _MyHomePageState extends State<MyHomePage> {
               texButton(r"\ln", context, Priority.medium, buttonPressed),
               texButton(r"\log_{10}", context, Priority.medium, buttonPressed),
               normalButton("4", context, Priority.highest, buttonPressed,
-                  color: const Color(0xFF625B5B)),
+                  color: CustomColors.secondary),
               normalButton("5", context, Priority.highest, buttonPressed,
-                  color: const Color(0xFF625B5B)),
+                  color: CustomColors.secondary),
               normalButton("6", context, Priority.highest, buttonPressed,
-                  color: const Color(0xFF625B5B)),
+                  color: CustomColors.secondary),
               normalButton(
                 "–",
                 context,
                 Priority.highest,
                 buttonPressed,
-                color: const Color(0xFFF0A500),
+                color: CustomColors.warning,
               ),
             ],
           ),
@@ -391,17 +393,17 @@ class _MyHomePageState extends State<MyHomePage> {
               texButton(r"e", context, Priority.high, buttonPressed),
               normalButton("EE", context, Priority.medium, buttonPressed),
               normalButton("1", context, Priority.highest, buttonPressed,
-                  color: const Color(0xFF625B5B)),
+                  color: CustomColors.secondary),
               normalButton("2", context, Priority.highest, buttonPressed,
-                  color: const Color(0xFF625B5B)),
+                  color: CustomColors.secondary),
               normalButton("3", context, Priority.highest, buttonPressed,
-                  color: const Color(0xFF625B5B)),
+                  color: CustomColors.secondary),
               normalButton(
                 "+",
                 context,
                 Priority.highest,
                 buttonPressed,
-                color: const Color(0xFFF0A500),
+                color: CustomColors.warning,
               ),
             ],
           ),
@@ -420,15 +422,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 name: "Random Number (0..1)",
               ),
               normalButton(".", context, Priority.highest, buttonPressed,
-                  color: const Color(0xFF625B5B)),
+                  color: CustomColors.secondary),
               normalButton("0", context, Priority.highest, buttonPressed,
-                  color: const Color(0xFF625B5B)),
+                  color: CustomColors.secondary),
               iconButton(
                 CupertinoIcons.delete_left,
                 context,
                 Priority.highest,
                 buttonPressed,
-                color: const Color(0xFFE84545),
+                color: CustomColors.danger,
                 name: "Delete",
               ),
               normalButton(
@@ -436,7 +438,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 context,
                 Priority.highest,
                 buttonPressed,
-                color: const Color(0xFFF0A500),
+                color: CustomColors.warning,
               ),
             ],
           ),
