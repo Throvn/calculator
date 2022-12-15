@@ -73,12 +73,10 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void buttonPressed(String buttonText) {
     switch (buttonText.toLowerCase()) {
-      case "(":
-        // _calculator.expression.openBracket();
+      case "":
         break;
       case "()":
         _calculator.expression.encloseBrackets();
-        // _calculator.expression.closeBracket();
         break;
       case "0":
       case "1":
@@ -226,16 +224,19 @@ class _MyHomePageState extends State<MyHomePage> {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Math.tex(
-                        _calculator.history[index].toString(),
-                        textStyle: const TextStyle(
-                          color: Colors.white,
-                          fontSize: 42,
-                        ),
-                        onErrorFallback: (FlutterMathException e) => Text(
-                          _calculator.history[index].toAscii,
-                          style: TextStyle(
-                              color: CustomColors.danger, fontSize: 42),
+                      SingleChildScrollView(
+                        scrollDirection: Axis.horizontal,
+                        child: Math.tex(
+                          _calculator.history[index].toString(),
+                          textStyle: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 42,
+                          ),
+                          onErrorFallback: (FlutterMathException e) => Text(
+                            _calculator.history[index].toAscii,
+                            style: TextStyle(
+                                color: CustomColors.danger, fontSize: 42),
+                          ),
                         ),
                       ),
                       const SizedBox(
@@ -263,7 +264,7 @@ class _MyHomePageState extends State<MyHomePage> {
           // now the keys are coming
           Row(
             children: [
-              normalButton("(", context, Priority.highest, buttonPressed),
+              normalButton("", context, Priority.highest, buttonPressed),
               normalButton("()", context, Priority.highest, buttonPressed),
               normalButton("mc", context, Priority.medium, buttonPressed),
               normalButton("m+", context, Priority.medium, buttonPressed),
