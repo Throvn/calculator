@@ -1,3 +1,5 @@
+import 'package:calendar/operands/brackets.dart';
+
 import 'operands/eulers_number.dart';
 import 'operands/expression.dart';
 import 'operands/addition.dart';
@@ -150,40 +152,44 @@ class Calculation {
       }
     }
   }
+
+  void encloseBrackets() {
+    _expression = Brackets(_expression);
+  }
 }
 
-Operator symbolToOperand(String symbol, Expression leftSide) {
+Operator symbolToOperand(String symbol, Expression expr) {
   switch (symbol) {
     case "+":
-      return Addition(leftSide, Fillable());
+      return Addition(expr, Fillable());
     case "-":
-      return Subtraction(leftSide, Fillable());
+      return Subtraction(expr, Fillable());
     case "/":
-      return Fraction(leftSide, Fillable());
+      return Fraction(expr, Fillable());
     case "*":
-      return Multiplication(leftSide, Fillable());
+      return Multiplication(expr, Fillable());
     case "x^2":
-      return Power(leftSide, Number(2));
+      return Power(expr, Number(2));
     case "x^3":
-      return Power(leftSide, Number(3));
+      return Power(expr, Number(3));
     case "x^y":
-      return Power(leftSide, Fillable());
+      return Power(expr, Fillable());
     case "e^x":
-      return Power(EulersNumber(), leftSide);
+      return Power(EulersNumber(), expr);
     case "10^x":
-      return Power(Number(10), leftSide);
+      return Power(Number(10), expr);
     case "1/x":
-      return Fraction(Number(1), leftSide);
+      return Fraction(Number(1), expr);
     case "sqrt":
-      return Root(leftSide, Number(2));
+      return Root(expr, Number(2));
     case "3rdrt":
-      return Root(leftSide, Number(3));
+      return Root(expr, Number(3));
     case "nthrt":
-      return Root(leftSide, Fillable());
+      return Root(expr, Fillable());
     case "ln":
-      return Logarithm(EulersNumber(), leftSide);
+      return Logarithm(EulersNumber(), expr);
     case "log10":
-      return Logarithm(Number(10), leftSide);
+      return Logarithm(Number(10), expr);
     default:
       throw "Unknown Symbol";
   }

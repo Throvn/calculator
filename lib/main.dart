@@ -76,7 +76,8 @@ class _MyHomePageState extends State<MyHomePage> {
       case "(":
         // _calculator.expression.openBracket();
         break;
-      case ")":
+      case "()":
+        _calculator.expression.encloseBrackets();
         // _calculator.expression.closeBracket();
         break;
       case "0":
@@ -120,8 +121,12 @@ class _MyHomePageState extends State<MyHomePage> {
         _calculator.memory = 0;
         break;
       case "mr":
-        // could be that this has bugs
-        // _calculator.expression.appendNumber(_calculator.memory.toString());
+        if (_calculator.memory.isNegative) {
+          _calculator.expression.insertOperand("-");
+        } else {
+          _calculator.expression.insertOperand("+");
+        }
+        _calculator.expression.insertNumber(Number(_calculator.memory.abs()));
         break;
       case "m+":
         _calculator.addResultToMemory(subtract: false);
@@ -133,6 +138,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _calculator.expression.switchSign();
         break;
       case "random number (0..1)":
+        _calculator.expression.insertOperand("+");
         _calculator.expression.insertNumber(Number(Random().nextDouble()));
         break;
       case "ee":
@@ -180,10 +186,8 @@ class _MyHomePageState extends State<MyHomePage> {
       case "=":
         // Add new row to history. Last history entry is the current expression.
         _calculator.history.add(Calculation(Number(0)));
-        historyScrollController.animateTo(
-            _calculator.history.length * 107 + 54.5,
-            curve: Curves.linear,
-            duration: const Duration(milliseconds: 300));
+        historyScrollController.animateTo(_calculator.history.length * 107,
+            curve: Curves.linear, duration: const Duration(milliseconds: 300));
         break;
       case "settings":
         openAboutDialog(context);
@@ -260,7 +264,7 @@ class _MyHomePageState extends State<MyHomePage> {
           Row(
             children: [
               normalButton("(", context, Priority.highest, buttonPressed),
-              normalButton(")", context, Priority.highest, buttonPressed),
+              normalButton("()", context, Priority.highest, buttonPressed),
               normalButton("mc", context, Priority.medium, buttonPressed),
               normalButton("m+", context, Priority.medium, buttonPressed),
               normalButton("m-", context, Priority.low, buttonPressed),

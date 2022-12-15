@@ -5,7 +5,7 @@ class Brackets extends OperatorOne {
   Brackets(Expression right) : super("()", right);
 
   @override
-  String toString() => r"\square";
+  String toString() => "($right)";
 
   @override
   num calculate() => right.calculate();
