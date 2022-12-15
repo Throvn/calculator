@@ -15,23 +15,17 @@ class Calculator {
   List<Calculation> history = [];
 
   // the normal expression.
-  // Has a special format, to be easily convertable
-  // to latex and normal (function_tree) math.
   Calculation get expression =>
       history.isNotEmpty ? history.last : Calculation(Number(0));
 
   // the memory _expression (same format as [_expression])
-  Expression memory = Number(0);
+  num memory = 0;
 
   /// Adds the result to the [memory] variable. If subtract == true,
   /// it subtracts the result from the value stored in [memory].
   void addResultToMemory({bool subtract = false}) {
-    // if (expression.isValid()) {
-    // double result = expression.getResultAsDouble();
-    // memory += (subtract ? -result : result);
-    // } else {
-    //   print("No valid result to add to memory");
-    // }
+    num result = expression.calculate();
+    memory += (subtract ? -result : result);
   }
 
   /// Creates a class which can evaluate expressions,

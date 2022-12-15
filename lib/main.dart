@@ -117,7 +117,7 @@ class _MyHomePageState extends State<MyHomePage> {
         // _calculator.expression.deleteLastCharacter();
         break;
       case "mc":
-        _calculator.memory = Number(0);
+        _calculator.memory = 0;
         break;
       case "mr":
         // could be that this has bugs
@@ -178,10 +178,12 @@ class _MyHomePageState extends State<MyHomePage> {
         _calculator.expression.insertOperand("1/x");
         break;
       case "=":
-        print("Return result");
-        // _calculator.history.add(Number(_calculator.expression.calculate()));
-        historyScrollController.animateTo(_calculator.history.length * 107,
-            curve: Curves.linear, duration: const Duration(milliseconds: 300));
+        // Add new row to history. Last history entry is the current expression.
+        _calculator.history.add(Calculation(Number(0)));
+        historyScrollController.animateTo(
+            _calculator.history.length * 107 + 54.5,
+            curve: Curves.linear,
+            duration: const Duration(milliseconds: 300));
         break;
       case "settings":
         openAboutDialog(context);
@@ -208,45 +210,48 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
-              child: ListView.separated(
-                controller: historyScrollController,
-                padding: const EdgeInsets.only(bottom: 100),
-                separatorBuilder: (context, index) => const Divider(height: 50),
-                scrollDirection: Axis.vertical,
-                itemCount: _calculator.history.length,
-                itemBuilder: (_, index) => Column(
-                  crossAxisAlignment: CrossAxisAlignment.end,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Math.tex(
-                      _calculator.history[index].toString(),
-                      textStyle: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 42,
+              child: SafeArea(
+                child: ListView.separated(
+                  controller: historyScrollController,
+                  padding: const EdgeInsets.only(bottom: 100),
+                  separatorBuilder: (context, index) =>
+                      const Divider(height: 50),
+                  scrollDirection: Axis.vertical,
+                  itemCount: _calculator.history.length,
+                  itemBuilder: (_, index) => Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Math.tex(
+                        _calculator.history[index].toString(),
+                        textStyle: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 42,
+                        ),
+                        onErrorFallback: (FlutterMathException e) => Text(
+                          _calculator.history[index].toAscii,
+                          style: TextStyle(
+                              color: CustomColors.danger, fontSize: 42),
+                        ),
                       ),
-                      onErrorFallback: (FlutterMathException e) => Text(
-                        _calculator.history[index].toAscii,
-                        style:
-                            TextStyle(color: CustomColors.danger, fontSize: 42),
+                      const SizedBox(
+                        height: 15,
                       ),
-                    ),
-                    const SizedBox(
-                      height: 15,
-                    ),
-                    Math.tex(
-                      scientificNotation
-                          ? _calculator.history[index]
-                              .calculate()
-                              .toStringAsExponential()
-                          : _calculator.history[index].calculate().toString(),
-                      textStyle: TextStyle(
-                        color: index == _calculator.history.length - 1
-                            ? Colors.white38
-                            : Colors.white,
-                        fontSize: 36,
+                      Math.tex(
+                        scientificNotation
+                            ? _calculator.history[index]
+                                .calculate()
+                                .toStringAsExponential()
+                            : _calculator.history[index].calculate().toString(),
+                        textStyle: TextStyle(
+                          color: index == _calculator.history.length - 1
+                              ? Colors.white38
+                              : Colors.white,
+                          fontSize: 36,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
               ),
             ),
