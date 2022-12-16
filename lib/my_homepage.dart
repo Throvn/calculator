@@ -50,9 +50,8 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text('Report current equation'),
-          content: const Text('If the current equation\n'
-              'seems not right to you\n'
-              'please report it through this button.\n'
+          content: const Text('If the current equation seems off\n'
+              'report it through this button.\n'
               'I will take a look at it and fix the error asap.'),
           actions: <Widget>[
             TextButton(
