@@ -4,6 +4,7 @@ import 'package:calendar/operands/brackets.dart';
 import 'package:calendar/operands/factorial.dart';
 import 'package:calendar/operands/operator_one.dart';
 
+import 'operands/cosine.dart';
 import 'operands/eulers_number.dart';
 import 'operands/expression.dart';
 import 'operands/addition.dart';
@@ -174,6 +175,8 @@ OperatorOne symbolToOperandOne(String symbol, Expression expr) {
       return Factorial(expr);
     case "sin":
       return Sine(expr);
+    case "cos":
+      return Cosine(expr);
     default:
       throw "Unknown Symbol";
   }

@@ -187,6 +187,9 @@ class _MyHomePageState extends State<MyHomePage> {
       case r"\sin":
         _calculator.expression.insertOnesidedOperand("sin");
         break;
+      case r"\cos":
+        _calculator.expression.insertOnesidedOperand("cos");
+        break;
       case "=":
         // Add new row to history. Last history entry is the current expression.
         _calculator.history.add(Calculation(Number(0)));
