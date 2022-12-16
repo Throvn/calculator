@@ -1,7 +1,8 @@
-import 'dart:math';
-
 import 'operands/brackets.dart';
 import 'operands/factorial.dart';
+import 'operands/hyperbolic_cosine.dart';
+import 'operands/hyperbolic_sine.dart';
+import 'operands/hyperbolic_tangent.dart';
 import 'operands/operator_one.dart';
 
 import 'operands/cosine.dart';
@@ -179,6 +180,12 @@ OperatorOne symbolToOperandOne(String symbol, Expression expr) {
       return Cosine(expr);
     case "tan":
       return Tangent(expr);
+    case "sinh":
+      return HyperbolicSine(expr);
+    case "cosh":
+      return HyperbolicCosine(expr);
+    case "tanh":
+      return HyperbolicTangent(expr);
     default:
       throw "Unknown Symbol";
   }
