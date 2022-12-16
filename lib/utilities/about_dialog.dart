@@ -1,8 +1,11 @@
+import 'package:calculator/calculate.dart';
 import 'package:flutter/material.dart';
 import 'package:in_app_review/in_app_review.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
-void openAboutDialog(BuildContext context) {
+import '../operands/number.dart';
+
+void openAboutDialog(BuildContext context, Calculator calculator) {
   showAboutDialog(
       context: context,
       applicationVersion: "v1.0.0",
@@ -37,8 +40,22 @@ void openAboutDialog(BuildContext context) {
           alignment: MainAxisAlignment.start,
           children: [
             ElevatedButton(
-                onPressed: () => launchUrlString(
-                    "https://github.com/Throvn/calculator/issues"),
+                onPressed: () {
+                  String stringCalculation = "**History:**\n";
+                  for (var calculation in calculator.history) {
+                    stringCalculation += calculation.toString() + "\n\n";
+                  }
+
+                  Calculation lastCalculation = Calculation(Number(-1));
+                  if (calculator.history.isNotEmpty) {
+                    lastCalculation = calculator.history.last;
+                  }
+
+                  String issueUrl = Uri.encodeFull(
+                      "https://github.com/Throvn/calculator/issues/new?title=Bug in: ${lastCalculation.toAscii}&body=**LaTeX:** ${lastCalculation.toString()}\n**Ascii:** ${lastCalculation.toAscii}\n$stringCalculation\nFurther details (Expected Outcome):");
+                  // open newly generated github issue in in-app browser.
+                  launchUrlString(issueUrl);
+                },
                 child: const Text("Report Issue")),
             ElevatedButton(
                 onPressed: () async {

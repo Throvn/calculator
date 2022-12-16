@@ -48,6 +48,7 @@ class Calculator {
 class Calculation {
   Expression _expression;
   final List<Expression> _history = [];
+  List<Expression> get history => _history;
 
   void setExpression(Expression expr) {
     // store previous calculation step in history

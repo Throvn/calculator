@@ -209,7 +209,7 @@ class _MyHomePageState extends State<MyHomePage> {
             curve: Curves.linear, duration: const Duration(milliseconds: 300));
         break;
       case "settings":
-        openAboutDialog(context);
+        openAboutDialog(context, _calculator);
         break;
       default:
         print("Unhandled input!");
@@ -264,11 +264,14 @@ class _MyHomePageState extends State<MyHomePage> {
                         height: 15,
                       ),
                       Math.tex(
-                        scientificNotation
-                            ? _calculator.history[index]
-                                .calculate()
-                                .toStringAsExponential()
-                            : _calculator.history[index].calculate().toString(),
+                        "= " +
+                            (scientificNotation
+                                ? _calculator.history[index]
+                                    .calculate()
+                                    .toStringAsExponential()
+                                : _calculator.history[index]
+                                    .calculate()
+                                    .toString()),
                         textStyle: TextStyle(
                           color: index == _calculator.history.length - 1
                               ? Colors.white38
