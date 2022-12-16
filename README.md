@@ -7,6 +7,10 @@ It is optimized for the **iPad** dimensions and supports resizable windows.
 If you experience any technical bugs, submit them via the button in the settings.
 If you experience maleformed equations or even mathematical errors, please use the built-in bug report button.
 
+## Demo
+
+https://user-images.githubusercontent.com/35542741/208095305-b9422dad-9b1c-49f4-95ea-f9120a9516d2.mp4
+
 ## Features
 
 - Resizable
