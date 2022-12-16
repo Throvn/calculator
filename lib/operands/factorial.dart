@@ -12,6 +12,7 @@ class Factorial extends OperatorOne {
   @override
   num calculate() {
     num result = right.calculate();
+    // Use exact value for real numbers.
     if (result is int) {
       int counter = 1;
       for (var i = 1; i <= result.toInt(); i++) {
@@ -19,6 +20,7 @@ class Factorial extends OperatorOne {
       }
       return counter;
     }
+    // Use approximation for decimal numbers.
     return factorial(result.toDouble());
   }
 

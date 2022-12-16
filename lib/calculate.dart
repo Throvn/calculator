@@ -15,6 +15,7 @@ import 'operands/number.dart';
 import 'operands/operator.dart';
 import 'operands/power.dart';
 import 'operands/root.dart';
+import 'operands/sine.dart';
 import 'operands/subtraction.dart';
 import 'operands/factorial.dart';
 
@@ -171,6 +172,8 @@ OperatorOne symbolToOperandOne(String symbol, Expression expr) {
   switch (symbol) {
     case "!":
       return Factorial(expr);
+    case "sin":
+      return Sine(expr);
     default:
       throw "Unknown Symbol";
   }
