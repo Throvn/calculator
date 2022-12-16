@@ -19,6 +19,7 @@ import 'operands/root.dart';
 import 'operands/sine.dart';
 import 'operands/subtraction.dart';
 import 'operands/factorial.dart';
+import 'operands/tangent.dart';
 
 class Calculator {
   List<Calculation> history = [];
@@ -177,6 +178,8 @@ OperatorOne symbolToOperandOne(String symbol, Expression expr) {
       return Sine(expr);
     case "cos":
       return Cosine(expr);
+    case "tan":
+      return Tangent(expr);
     default:
       throw "Unknown Symbol";
   }

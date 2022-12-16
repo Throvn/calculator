@@ -4,7 +4,7 @@ import 'expression.dart';
 import 'operator_one.dart';
 
 class Cosine extends OperatorOne {
-  Cosine(Expression value) : super("sin", value);
+  Cosine(Expression value) : super("cos", value);
 
   @override
   String toString() => r"\cos(" + right.toString() + ")";
