@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:calendar/calculate.dart';
-import 'package:calendar/utilities/about_dialog.dart';
-import 'package:calendar/utilities/colors.dart';
+import 'calculate.dart';
+import 'utilities/about_dialog.dart';
+import 'utilities/colors.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_math_fork/flutter_math.dart';
 import 'package:flutter/material.dart';

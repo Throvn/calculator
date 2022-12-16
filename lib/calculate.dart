@@ -1,8 +1,8 @@
 import 'dart:math';
 
-import 'package:calendar/operands/brackets.dart';
-import 'package:calendar/operands/factorial.dart';
-import 'package:calendar/operands/operator_one.dart';
+import 'operands/brackets.dart';
+import 'operands/factorial.dart';
+import 'operands/operator_one.dart';
 
 import 'operands/cosine.dart';
 import 'operands/eulers_number.dart';
@@ -18,7 +18,6 @@ import 'operands/power.dart';
 import 'operands/root.dart';
 import 'operands/sine.dart';
 import 'operands/subtraction.dart';
-import 'operands/factorial.dart';
 import 'operands/tangent.dart';
 
 class Calculator {

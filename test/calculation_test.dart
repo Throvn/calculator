@@ -2,7 +2,7 @@
 import 'package:test/test.dart';
 
 // file to test
-import 'package:calendar/calculate.dart';
+import 'package:calculator/calculate.dart';
 
 void main() {
   test('Squareroot delivers right results.', () {
