@@ -8,6 +8,7 @@
 .buildlog/
 .history
 .svn/
+lib/firebase_options.dart
 
 # IntelliJ related
 *.iml
