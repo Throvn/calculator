@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:calendar/operands/brackets.dart';
+import 'package:calendar/operands/factorial.dart';
+import 'package:calendar/operands/operator_one.dart';
 
 import 'operands/eulers_number.dart';
 import 'operands/expression.dart';
@@ -12,6 +16,7 @@ import 'operands/operator.dart';
 import 'operands/power.dart';
 import 'operands/root.dart';
 import 'operands/subtraction.dart';
+import 'operands/factorial.dart';
 
 class Calculator {
   List<Calculation> history = [];
@@ -153,8 +158,21 @@ class Calculation {
     }
   }
 
+  void insertOnesidedOperand(String symbol) {
+    _expression = symbolToOperandOne(symbol, _expression);
+  }
+
   void encloseBrackets() {
     _expression = Brackets(_expression);
+  }
+}
+
+OperatorOne symbolToOperandOne(String symbol, Expression expr) {
+  switch (symbol) {
+    case "!":
+      return Factorial(expr);
+    default:
+      throw "Unknown Symbol";
   }
 }
 

@@ -181,6 +181,9 @@ class _MyHomePageState extends State<MyHomePage> {
       case r"\frac{1}{x}":
         _calculator.expression.insertOperand("1/x");
         break;
+      case r"x!":
+        _calculator.expression.insertOnesidedOperand("!");
+        break;
       case "=":
         // Add new row to history. Last history entry is the current expression.
         _calculator.history.add(Calculation(Number(0)));

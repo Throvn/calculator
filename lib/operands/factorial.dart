@@ -1,8 +1,7 @@
-import 'dart:math' as math;
-
 import 'expression.dart';
-import 'operator.dart';
 import 'operator_one.dart';
+
+import '../math/factorial.dart';
 
 class Factorial extends OperatorOne {
   Factorial(Expression value) : super("!", value);
@@ -11,7 +10,17 @@ class Factorial extends OperatorOne {
   String toString() => "${super.right}!";
 
   @override
-  num calculate() => double.nan;
+  num calculate() {
+    num result = right.calculate();
+    if (result is int) {
+      int counter = 1;
+      for (var i = 1; i <= result.toInt(); i++) {
+        counter *= i;
+      }
+      return counter;
+    }
+    return factorial(result.toDouble());
+  }
 
   @override
   String get toAscii => "${super.right.toAscii}!";
