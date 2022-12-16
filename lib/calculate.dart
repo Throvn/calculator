@@ -47,6 +47,24 @@ class Calculator {
 
 class Calculation {
   Expression _expression;
+  final List<Expression> _history = [];
+
+  void setExpression(Expression expr) {
+    // store previous calculation step in history
+    _history.add(_expression);
+    _expression = expr;
+  }
+
+  /// Jumps one calculation step back.
+  void undo() {
+    if (_history.isEmpty) {
+      _expression = Number(0);
+      return;
+    }
+
+    _expression = _history.last;
+    _history.removeLast();
+  }
 
   Operator? pointer;
 
@@ -64,7 +82,7 @@ class Calculation {
   String get toAscii => _expression.toAscii;
 
   void reset() {
-    _expression = Number(0);
+    setExpression(Number(0));
     pointer = null;
   }
 
@@ -78,7 +96,7 @@ class Calculation {
         pointer = null;
       }
     } else if (_expression is Number && (_expression as Number).value == 0) {
-      _expression = number;
+      setExpression(number);
     }
   }
 
@@ -139,7 +157,7 @@ class Calculation {
   void insertOperand(String symbol) {
     //  we have to append on the end on the highest level
     if (pointer == null) {
-      _expression = symbolToOperand(symbol, _expression);
+      setExpression(symbolToOperand(symbol, _expression));
       if ((_expression as Operator).isFillable) {
         pointer = _expression as Operator;
       } else {
@@ -162,11 +180,11 @@ class Calculation {
   }
 
   void insertOnesidedOperand(String symbol) {
-    _expression = symbolToOperandOne(symbol, _expression);
+    setExpression(symbolToOperandOne(symbol, _expression));
   }
 
   void encloseBrackets() {
-    _expression = Brackets(_expression);
+    setExpression(Brackets(_expression));
   }
 }
 

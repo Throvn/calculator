@@ -113,7 +113,7 @@ class _MyHomePageState extends State<MyHomePage> {
         _calculator.expression.reset();
         break;
       case "delete":
-        // _calculator.expression.deleteLastCharacter();
+        _calculator.expression.undo();
         break;
       case "mc":
         _calculator.memory = 0;
