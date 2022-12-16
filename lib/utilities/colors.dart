@@ -6,5 +6,5 @@ class CustomColors {
   static Color background = const Color(0xFF1F1F1F);
   static Color secondary = const Color(0xFF625B5B);
 
-  CustomColors() {}
+  CustomColors._();
 }

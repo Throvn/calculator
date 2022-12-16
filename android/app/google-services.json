@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "912376657080",
+    "project_id": "calculator-57576",
+    "storage_bucket": "calculator-57576.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912376657080:android:3d785c1edadc586dd7304d",
+        "android_client_info": {
+          "package_name": "com.throvn.calculator"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "912376657080-7qqgmd55atok04frvmihc4uhtcpsptoq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDj-FDCe8uW_8XQP9lA6wj1CK1jv_nWH3s"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "912376657080-7qqgmd55atok04frvmihc4uhtcpsptoq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
