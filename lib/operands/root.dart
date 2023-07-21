@@ -15,6 +15,6 @@ class Root extends Operator {
 
   @override
   String get toAscii => right.calculate() != 2
-      ? r"root[" + right.toString() + "](" + left.toString() + ")"
+      ? r"sqrt[" + right.toString() + "](" + left.toString() + ")"
       : r"sqrt(" + left.toString() + ")";
 }

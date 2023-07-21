@@ -1,3 +1,6 @@
+import 'package:calculator/operands/empty_zero.dart';
+import 'package:function_tree/function_tree.dart';
+
 import 'operands/brackets.dart';
 import 'operands/factorial.dart';
 import 'operands/hyperbolic_cosine.dart';
@@ -72,7 +75,12 @@ class Calculation {
   Calculation(this._expression);
 
   num calculate() {
-    return _expression.calculate();
+    // Replace _ with 0 because '_' means not yet filled value.
+    try {
+      return _expression.toAscii.interpret();
+    } catch (e) {
+      return 0;
+    }
   }
 
   @override

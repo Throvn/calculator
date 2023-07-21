@@ -11,5 +11,5 @@ class Multiplication extends Operator {
   String toString() => left.toString() + r"\cdot" + right.toString();
 
   @override
-  String get toAscii => "${left.toAscii} x ${right.toAscii}";
+  String get toAscii => "${left.toAscii} * ${right.toAscii}";
 }

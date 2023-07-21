@@ -8,5 +8,5 @@ class Pi extends Number {
   String toString() => r"\pi";
 
   @override
-  String get toAscii => "π";
+  String get toAscii => "pi";
 }
